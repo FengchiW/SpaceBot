@@ -1,4 +1,5 @@
 # Spacebot
+<<<<<<< Updated upstream
 
 import os
 from discord.ext.commands import Bot
@@ -8,6 +9,15 @@ import sqlite3
 import sql
 import verify
 from cmd import get_stats, get_status, get_leaderboard
+=======
+from discord.ext import commands
+from discord import Intents
+import discord
+import sqlite3
+import sql
+import verify
+import os
+>>>>>>> Stashed changes
 
 #DONT LOOK!
 DISCORD_TOKEN="NzYxMDE3MzY5NTYwMzUwNzIw.X3Uepw.fqca_3Vc2l98bdLmrfElBy2FWC4"
@@ -15,12 +25,28 @@ DISCORD_TOKEN="NzYxMDE3MzY5NTYwMzUwNzIw.X3Uepw.fqca_3Vc2l98bdLmrfElBy2FWC4"
 TOKEN = DISCORD_TOKEN
 
 # Keep all intents; get everything hehe.
+<<<<<<< Updated upstream
 intents = discord.Intents.all()
 client = Bot(command_prefix="!", intents=intents)
+=======
+intents = Intents.all()
+
+client = commands.Bot(command_prefix=";", intents=intents)
+>>>>>>> Stashed changes
 
 # All the guilds this bot belongs too
 servers = []
 
+<<<<<<< Updated upstream
+=======
+@client.command()
+async def load(ctx, extension):
+    client.load_extension(f'cogs.{extension}')
+
+@client.command()
+async def unload(ctx, extension):
+    client.load_extension(f'cogs.{extension}')
+>>>>>>> Stashed changes
 
 def get_channel_by_name(server, name):
     for c in server.channels:
@@ -127,8 +153,11 @@ async def on_message(message):
                     await get_channel_by_name(server, "│verification-logs").send("```%s | has Failed to verify Reson: %s ```" % (member_user.name, eventcode))
         elif cmd == '!BOTSTATUS':
             pass
+<<<<<<< Updated upstream
         elif cmd == '!LEADERBOARD':
             await message.channel.send(embed = get_leaderboard())
+=======
+>>>>>>> Stashed changes
 
         for member in message.guild.members:
                 if int(message.author.id) == int(member.id):
@@ -189,4 +218,12 @@ async def on_message(message):
                 await message.delete()
             elif cmd == '!HC' or cmd == '!HEADCOUNT':
                 pass
+<<<<<<< Updated upstream
+=======
+
+for filename in os.listdir('./cogs'):
+    if filename.endswith('.py'):
+        client.load_extension(f'cogs.{filename[:-3]}')
+
+>>>>>>> Stashed changes
 client.run(TOKEN)
