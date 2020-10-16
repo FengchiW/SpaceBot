@@ -1,4 +1,4 @@
-import sql
+from ..util import sql
 import discord
 
 

@@ -1,44 +1,19 @@
 # Spacebot
-<<<<<<< Updated upstream
-
-import os
-from discord.ext.commands import Bot
-import discord
-import time
-import sqlite3
-import sql
-import verify
-from cmd import get_stats, get_status, get_leaderboard
-=======
 from discord.ext import commands
 from discord import Intents
 import discord
-import sqlite3
-import sql
-import verify
 import os
->>>>>>> Stashed changes
 
-#DONT LOOK!
+#DONT LOOK! We should put this in env
 DISCORD_TOKEN="NzYxMDE3MzY5NTYwMzUwNzIw.X3Uepw.fqca_3Vc2l98bdLmrfElBy2FWC4"
 
 TOKEN = DISCORD_TOKEN
 
 # Keep all intents; get everything hehe.
-<<<<<<< Updated upstream
-intents = discord.Intents.all()
-client = Bot(command_prefix="!", intents=intents)
-=======
 intents = Intents.all()
 
 client = commands.Bot(command_prefix=";", intents=intents)
->>>>>>> Stashed changes
 
-# All the guilds this bot belongs too
-servers = []
-
-<<<<<<< Updated upstream
-=======
 @client.command()
 async def load(ctx, extension):
     client.load_extension(f'cogs.{extension}')
@@ -46,7 +21,6 @@ async def load(ctx, extension):
 @client.command()
 async def unload(ctx, extension):
     client.load_extension(f'cogs.{extension}')
->>>>>>> Stashed changes
 
 def get_channel_by_name(server, name):
     for c in server.channels:

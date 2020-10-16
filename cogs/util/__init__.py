@@ -1,3 +1,4 @@
-from .sql import sql
-from .verify import verify
-from .embeds import embeds
+from . import sql
+from . import verify
+from . import embeds
+from . import Permissions as perms

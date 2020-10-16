@@ -1,5 +1,5 @@
 import discord
-import sql
+from ..util import sql
 
 def get_stats(uid):
     data = sql.fetch_user(uid)
