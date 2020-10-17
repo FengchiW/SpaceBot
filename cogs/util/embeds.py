@@ -1,19 +1,19 @@
 import discord
 
 portals = {
-    "Shatters" : "<:ShattersPortal:524596214847635456>"
+    "Shatters" : "<:ShattersPortal:524596214847635456>",
     "Parasite" : "<:Parasite:761334825919447070>"
 
 }
 keys = {
-    "Shatters" : "<:ShattersKey:524596214843441172>"
+    "Shatters" : "<:ShattersKey:524596214843441172>",
     "Parasite" : "<:Parasitekey:761334703834791948>"
 }
 status = {
-    "Daze" : "<:Daze:761336073765912626>"
-    "Warr" : "<:Warrior:761335945219538945>" 
-    "Slow" : "<:Slow:761659703004102697>"
-    "MSeal" : "<:MSeal:761659656853782578> 
+    "Daze" : "<:Daze:761336073765912626>",
+    "Warr" : "<:Warrior:761335945219538945>", 
+    "Slow" : "<:Slow:761659703004102697>",
+    "MSeal" : "<:MSeal:761659656853782578>",
     "Mystic" : "<:Mystic:524596214805561352>"
 }
 

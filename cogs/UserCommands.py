@@ -12,7 +12,7 @@ class UserCommands(commands.Cog):
     @commands.guild_only()
     async def stats(self, ctx, *args):
         uid = ctx.author.id
-        ctx.send(stats_command.get_stats(uid))
+        ctx.send(embed = stats_command.get_stats(uid))
 
     @commands.command(usage="leaderboard", description = "Returns the key poping leaderboard")
     @commands.guild_only()
@@ -23,7 +23,7 @@ class UserCommands(commands.Cog):
     @commands.guild_only()
     @Permissions.is_Leader_or_higher()
     async def get_status(self, ctx):
-        ctx.send(status_command.get_status())
+        ctx.send(embed = status_command.get_status())
 
 def setup(client):
     client.add_cog(UserCommands(client))

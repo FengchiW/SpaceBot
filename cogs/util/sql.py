@@ -1,4 +1,3 @@
-import sqlite3
 import random
 import mysql.connector
 from mysql.connector import Error
@@ -62,8 +61,25 @@ def fetch_user(uid):
         print("Fetch User Fail: ", e)
         return None
 
-def fetch_all():
-    pass
+def fetch_leaderboard():
+    try:
+        if not connection is None:
+            cursor = connection.cursor(buffered=True)
+            sql = "SELECT * FROM STD ORDER BY KEY_POPS DESC limit 10"
+            cursor.execute(sql)
+
+            data = cursor.fetchall()
+
+            print("Result: ", data)
+
+            return data
+        else:
+            print("Something went wrong")
+            return None
+    except Error as e:
+        connect()
+        print("Fetch User Fail: ", e)
+        return None
 
 def update_user(uid, column, change):
     try:
