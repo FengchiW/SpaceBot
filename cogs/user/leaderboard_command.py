@@ -1,8 +1,8 @@
 from ..util import sql
 import discord
 
-def leaderboard():
-    data = sql.fetch_leaderboard()
+def leaderboard(gid):
+    data = sql.fetch_leaderboard(gid)
     embed = discord.Embed(title="LeaderBoard", description="Top 10 Key Poppers", color=0xffffff)
     embed.set_author(name="Space Bot")
     for i in range(len(data)):

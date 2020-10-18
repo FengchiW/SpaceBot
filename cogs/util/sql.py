@@ -21,18 +21,22 @@ def connect():
     print("connection success")
     return True
 
-def add_user(ign, uid):
-    if fetch_user(uid) is None:
+def add_user(ign, gid, uid):
+    if fetch_user(gid, uid) is None:
         code = "STD"+str(random.randint(100,999))
         try:
             if not connection is None:
                 cursor = connection.cursor()
-                sql = "INSERT INTO STD VALUES (%s, %s, %s, 'NONE', 0, 0, 0, 0, 0, 'NONE')"
-                values = (uid, code, ign)
-                cursor.execute(sql, values)
+                sql = "INSERT INTO `{}` VALUES ({}, '{}', '{}', 'NONE', 0, 0, 0, 0, 0, 'NONE', 0)".format(
+                    gid,
+                    uid,
+                    code,
+                    ign
+                )
+                cursor.execute(sql)
                 connection.commit()
                 cursor.close()
-                return "Added User %s %s %s" % values
+                return "Added User"
             else:
                 print("Something went wrong")
 
@@ -41,11 +45,11 @@ def add_user(ign, uid):
             print(e)
             return "ERROR"
 
-def fetch_user(uid):
+def fetch_user(gid, uid):
     try:
         if not connection is None:
             cursor = connection.cursor(buffered=True)
-            sql = "SELECT * FROM STD WHERE ID = %s" % (uid)
+            sql = "SELECT * FROM `{}` WHERE ID = {}".format(gid, uid)
             cursor.execute(sql)
 
             data = cursor.fetchone()
@@ -54,19 +58,22 @@ def fetch_user(uid):
 
             return data
         else:
-            print("Something went wrong")
+            print("Fetch User Fail: Connection not established, reconnecting")
+            connect()
             return None
     except Error as e:
         connect()
         print("Fetch User Fail: ", e)
         return None
 
-def fetch_leaderboard():
+def fetch_leaderboard(gid):
     try:
         if not connection is None:
             cursor = connection.cursor(buffered=True)
-            sql = "SELECT * FROM STD ORDER BY KEY_POPS DESC limit 10"
-            cursor.execute(sql)
+            sql = "SELECT * FROM `{}` ORDER BY KEY_POPS DESC limit 10".format(
+                gid
+            )
+            cursor.execute(sql, (gid))
 
             data = cursor.fetchall()
 
@@ -81,14 +88,15 @@ def fetch_leaderboard():
         print("Fetch User Fail: ", e)
         return None
 
-def update_user(uid, column, change):
+def update_user(uid, column, change, gid):
     try:
-        if fetch_user(uid) is None:
-            add_user("Null", uid)
+        if fetch_user(gid, uid) is None:
+            add_user("Null", gid, uid)
         if not connection is None:
             cursor = connection.cursor()
-            sql = "UPDATE STD SET %s = %s WHERE id = %s" % (column, change, uid)
-            cursor.execute(sql)
+            sql = "UPDATE `{}` SET `{}` = `{}` WHERE id = `{}`"
+            t = (gid, column, change, uid)
+            cursor.execute(sql, t)
             connection.commit()
             return "Edited User %s %s %s" % (column, change, uid)
         else:
@@ -99,18 +107,18 @@ def update_user(uid, column, change):
         print("Update User Fail", e)
         return "ERROR"
 
-def logkey(uid, keys):
-    newkeys = fetch_user(uid)[6] + keys
-    update_user(uid, 'KEY_POPS', newkeys)
+def logkey(uid, keys, gid):
+    newkeys = fetch_user(gid, uid)[6] + keys
+    update_user(uid, 'KEY_POPS', newkeys, gid)
 
-def logvile(uid, viles):
-    newviles = fetch_user(uid)[8] + viles
-    update_user(uid, 'VILES', newviles)
+def logvile(uid, viles, gid):
+    newviles = fetch_user(gid, uid)[8] + viles
+    update_user(uid, 'VILES', newviles, gid)
 
-def logrune(uid, runes):
-    newrunes = fetch_user(uid)[7] + runes
-    update_user(uid, 'RUNES', newrunes)
+def logrune(uid, runes, gid):
+    newrunes = fetch_user(gid, uid)[7] + runes
+    update_user(uid, 'RUNES', newrunes, gid)
 
-def changeName(uid, name):
+def changeName(uid, name, gid):
     newnick = "\""+name+"\""
-    update_user(uid, 'IGN', newnick)
+    update_user(uid, 'IGN', newnick, gid)

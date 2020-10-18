@@ -1,30 +1,42 @@
 import discord
 from discord.ext import commands
 from .util import Permissions
-from .user import status_command, leaderboard_command, stats_command
+from .user import get_stats, leaderboard, get_status
 
 
 class UserCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(usage="stats", description = "Returns the user's run stats")
+    @commands.command(usage="IGN", description = "confirms the user", case_insensitive = True)
+    @commands.guild_only()
+    async def confirm(self, ctx, *args):
+        uid = ctx.author.id
+        await ctx.send(embed = get_stats(ctx.guild.id, uid))
+
+    @commands.command(description = "verify the user", case_insensitive = True)
+    @commands.guild_only()
+    async def verify(self, ctx, *args):
+        uid = ctx.author.id
+        await ctx.send(embed = get_stats(ctx.guild.id, uid))
+
+    @commands.command(usage="stats", description = "Returns the user's run stats", case_insensitive = True)
     @commands.guild_only()
     async def stats(self, ctx, *args):
         uid = ctx.author.id
-        ctx.send(embed = stats_command.get_stats(uid))
+        await ctx.send(embed = get_stats(ctx.guild.id, uid))
 
-    @commands.command(usage="leaderboard", description = "Returns the key poping leaderboard")
+    @commands.command(aliases = ["lb"], usage="leaderboard", description = "Returns the key poping leaderboard", case_insensitive = True)
     @commands.guild_only()
     async def leaderboard(self, ctx, *args):
-        ctx.send(leaderboard_command.leaderboard())
+        await ctx.send(embed = leaderboard(ctx.guild.id))
 
-    @commands.command(usage="get_status", description = "Returns current bot stats")
+    @commands.command(description = "Returns current bot stats", case_insensitive = True)
     @commands.guild_only()
-    @Permissions.is_Leader_or_higher()
-    async def get_status(self, ctx):
-        ctx.send(embed = status_command.get_status())
-
+    @commands.check(Permissions.is_Leader_or_higher)
+    async def getstatus(self, ctx):
+        await ctx.send(embed = get_status(ctx.guild.id))
+    
 def setup(client):
     client.add_cog(UserCommands(client))
 
