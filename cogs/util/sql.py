@@ -27,13 +27,11 @@ def add_user(ign, gid, uid):
         try:
             if not connection is None:
                 cursor = connection.cursor()
-                sql = "INSERT INTO `{}` VALUES ({}, '{}', '{}', 'NONE', 0, 0, 0, 0, 0, 'NONE', 0)".format(
-                    gid,
-                    uid,
-                    code,
-                    ign
-                )
-                cursor.execute(sql)
+                sql = "INSERT INTO `%(guild)s` VALUES (%(user)s, %(code)s, %(ign)s, 'NONE', 0, 0, 0, 0, 0, 'NONE', 0)"
+                cursor.execute(sql, {'guild': gid,
+                                     'user' : uid,
+                                     'code' : code,
+                                     'ign'  : ign})
                 connection.commit()
                 cursor.close()
                 return "Added User"
@@ -49,8 +47,9 @@ def fetch_user(gid, uid):
     try:
         if not connection is None:
             cursor = connection.cursor(buffered=True)
-            sql = "SELECT * FROM `{}` WHERE ID = {}".format(gid, uid)
-            cursor.execute(sql)
+            sql = "SELECT * FROM `%(guild)s` WHERE ID = %(user)s"
+            cursor.execute(sql, {'guild': gid,
+                                 'user' : uid})
 
             data = cursor.fetchone()
 
@@ -70,10 +69,8 @@ def fetch_leaderboard(gid):
     try:
         if not connection is None:
             cursor = connection.cursor(buffered=True)
-            sql = "SELECT * FROM `{}` ORDER BY KEY_POPS DESC limit 10".format(
-                gid
-            )
-            cursor.execute(sql, (gid))
+            sql = "SELECT * FROM `%(guild)s` ORDER BY KEY_POPS DESC limit 10"
+            cursor.execute(sql, {'guild': gid})
 
             data = cursor.fetchall()
 
@@ -94,9 +91,11 @@ def update_user(uid, column, change, gid):
             add_user("Null", gid, uid)
         if not connection is None:
             cursor = connection.cursor()
-            sql = "UPDATE `{}` SET `{}` = `{}` WHERE id = `{}`"
-            t = (gid, column, change, uid)
-            cursor.execute(sql, t)
+            sql = "UPDATE `%(guild)s` SET `%(col)s` = `%(value)s` WHERE id = `%(user)s`"
+            cursor.execute(sql, {'guild': gid,
+                                 'col'  : column,
+                                 'value': change,
+                                 'user' : uid})
             connection.commit()
             return "Edited User %s %s %s" % (column, change, uid)
         else:

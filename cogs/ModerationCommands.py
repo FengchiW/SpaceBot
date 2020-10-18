@@ -12,8 +12,8 @@ class ModerationCommands(commands.Cog):
     @commands.guild_only()
     async def manver(self, ctx, user, ign):
         uid = int(user[3:-1])
-        print(uid, ign)
-        await ctx.send(embed = manver(ign, uid, ctx.guild.id))
+        manver(ign, uid, ctx.guild.id)
+        await ctx.send("verified")
     
     @commands.command(description = "Connects the database", case_insensitive = True)
     @commands.guild_only()

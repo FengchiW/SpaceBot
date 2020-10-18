@@ -9,7 +9,7 @@ class UserCommands(commands.Cog):
         self.client = client
 
     @commands.command(usage="IGN", description = "confirms the user", case_insensitive = True)
-    @commands.guild_only()
+    @commands.dm_only()
     async def confirm(self, ctx, *args):
         uid = ctx.author.id
         await ctx.send(embed = get_stats(ctx.guild.id, uid))
