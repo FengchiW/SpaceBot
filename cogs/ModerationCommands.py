@@ -7,6 +7,7 @@ from .user import get_status, manver, connectdb
 class ModerationCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
+        connectdb()
 
     @commands.command(aliases = ["mv", "adduser", "au"], usage="@<User> IGN", description = "Returns the user's run stats", case_insensitive = True)
     @commands.guild_only()

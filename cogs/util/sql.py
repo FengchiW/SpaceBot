@@ -121,16 +121,20 @@ def update_user(uid, column, change, gid):
         print("Update User Fail", e)
         return "ERROR"
 
+def logPoints(uid, points, gid) -> bool:
+    newpoints = fetch_user(gid, uid)['POINTS'] + points
+    update_user(uid, 'POINTS', newpoints, gid)
+
 def logkey(uid, keys, gid):
-    newkeys = fetch_user(gid, uid)[6] + keys
+    newkeys = fetch_user(gid, uid)['KEYS'] + keys
     update_user(uid, 'KEY_POPS', newkeys, gid)
 
-def logvile(uid, viles, gid):
-    newviles = fetch_user(gid, uid)[8] + viles
+def logvial(uid, viles, gid):
+    newviles = fetch_user(gid, uid)['VIALS'] + viles
     update_user(uid, 'VILES', newviles, gid)
 
 def logrune(uid, runes, gid):
-    newrunes = fetch_user(gid, uid)[7] + runes
+    newrunes = fetch_user(gid, uid)['RUNES'] + runes
     update_user(uid, 'RUNES', newrunes, gid)
 
 def changeName(uid, name, gid):
