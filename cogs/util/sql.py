@@ -53,9 +53,24 @@ def fetch_user(gid, uid):
 
             data = cursor.fetchone()
 
-            print("Result: ", data)
+            if data is None:
+                return None
+            
+            out = {
+                "UID"   : data[0],
+                "CODE"  : data[1],
+                "IGN"   : data[2],
+                "ALT"   : data[3],
+                "O3"    : data[4],
+                "RUNS"  : data[5],
+                "KEYS"  : data[6],
+                "RUNES" : data[7],
+                "VIALS" : data[8],
+                "ROLES" : data[9],
+                "POINTS": data[10],
+            }
 
-            return data
+            return out
         else:
             print("Fetch User Fail: Connection not established, reconnecting")
             connect()
