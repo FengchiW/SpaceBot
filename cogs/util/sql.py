@@ -1,5 +1,6 @@
 import random
 import mysql.connector
+from . import constants
 from mysql.connector import Error
 
 connection = None
@@ -23,14 +24,13 @@ def connect():
 
 def add_user(ign, gid, uid):
     if fetch_user(gid, uid) is None:
-        code = "STD"+str(random.randint(100,999))
         try:
             if not connection is None:
                 cursor = connection.cursor()
-                sql = "INSERT INTO `%(guild)s` VALUES (%(user)s, %(code)s, %(ign)s, 'NONE', 0, 0, 0, 0, 0, 'NONE', 0)"
+                sql = "INSERT INTO `%(guild)s` VALUES (%(user)s, %(verified)s, %(ign)s, 'NONE', 0, 0, 0, 0, 0, 0)"
                 cursor.execute(sql, {'guild': gid,
+                                     'verified': "True",
                                      'user' : uid,
-                                     'code' : code,
                                      'ign'  : ign})
                 connection.commit()
                 cursor.close()
@@ -47,7 +47,7 @@ def fetch_user(gid, uid):
     try:
         if not connection is None:
             cursor = connection.cursor(buffered=True)
-            sql = "SELECT * FROM `%(guild)s` WHERE ID = %(user)s"
+            sql = "SELECT * FROM `%(guild)s` WHERE " + constants.SQL_UID + " = %(user)s"
             cursor.execute(sql, {'guild': gid,
                                  'user' : uid})
 
@@ -57,17 +57,16 @@ def fetch_user(gid, uid):
                 return None
             
             out = {
-                "UID"   : data[0],
-                "CODE"  : data[1],
-                "IGN"   : data[2],
-                "ALT"   : data[3],
-                "O3"    : data[4],
-                "RUNS"  : data[5],
-                "KEYS"  : data[6],
-                "RUNES" : data[7],
-                "VIALS" : data[8],
-                "ROLES" : data[9],
-                "POINTS": data[10],
+                constants.SQL_UID  : data[0],
+                constants.SQL_VERIFIED  : data[1],
+                constants.SQL_IGN   : data[2],
+                constants.SQL_ALT   : data[3],
+                constants.SQL_O3    : data[4],
+                constants.SQL_RUNS  : data[5],
+                constants.SQL_KEY_POPS  : data[6],
+                constants.SQL_RUNES : data[7],
+                constants.SQL_VIALS : data[8],
+                constants.SQL_POINTS: data[9],
             }
 
             return out
@@ -125,18 +124,18 @@ def logPoints(uid, points, gid) -> bool:
     newpoints = fetch_user(gid, uid)['POINTS'] + points
     update_user(uid, 'POINTS', newpoints, gid)
 
-def logkey(uid, keys, gid):
+def log_key(uid, keys, gid):
     newkeys = fetch_user(gid, uid)['KEYS'] + keys
     update_user(uid, 'KEY_POPS', newkeys, gid)
 
-def logvial(uid, viles, gid):
+def log_vial(uid, viles, gid):
     newviles = fetch_user(gid, uid)['VIALS'] + viles
     update_user(uid, 'VILES', newviles, gid)
 
-def logrune(uid, runes, gid):
+def log_rune(uid, runes, gid):
     newrunes = fetch_user(gid, uid)['RUNES'] + runes
     update_user(uid, 'RUNES', newrunes, gid)
 
-def changeName(uid, name, gid):
+def change_ign(uid, name, gid):
     newnick = "\""+name+"\""
     update_user(uid, 'IGN', newnick, gid)
