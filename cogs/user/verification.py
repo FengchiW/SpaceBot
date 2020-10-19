@@ -94,11 +94,13 @@ def confirm(uid, ign):
                     sql.update_user(uid, constants.SQL_VERIFIED, "True", guild.id)
                 else:
                     sql.add_user(ign, guild.id, uid)
-                verifications.pop[uid]
+                del verifications[uid]
                 return "Successfully verified!"
             else:
                 return "Your location is public! Set it to hidden and try again."
         else:
             return "A minimum of 20 stars required you have %s" % (rank)
     else:
-        return "No code was found in your Realmeye description: %s, %s, %s " % (line1, line2, line3)
+        return "Your unique code was not found in your Realmeye description! Your description is:\n%s\n%s\n%s\n\nIf " \
+               "you have recently attempted to verify, please wait a few minutes before trying again." % (line1,
+                                                                                                          line2, line3)
