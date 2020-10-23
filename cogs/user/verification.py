@@ -1,8 +1,11 @@
 import asyncio
+import codecs
+import json
 import random
+import requests
+
 from ..util import sql, constants
-from ..util.embeds import verification_embed
-import codecs, requests, json
+from ..util.embeds import verification_embed, verification_expired_embed, timed_embed
 
 # verify (ign, code) Verifies the user ouputing a code based on a player's realmeye statistics
 
@@ -23,6 +26,7 @@ async def start_verify(ctx):
         await ctx.send(":x: **<@" + str(uid) + ">, you're already verified or verifying!**",
                        delete_after=VERIFY_MSG_DELETE_TIME)
         return
+
     # generate a prefix from the first letters of the guild name, assuming
     # the guild name contains alphabetical characters
     prefix = "".join([s[0] for s in ctx.guild.name.split()])
@@ -34,13 +38,17 @@ async def start_verify(ctx):
     code = prefix + "_" + str(random.randint(MIN_CODE, MAX_CODE))
     # user with ID uid is verifying for guild with ID gid.
     verifications[uid] = (ctx.guild, code)
+
+    # Notify them of verification in channel and send DM
     await ctx.send(":rocket: **<@" + str(uid) + ">, message sent!**", delete_after=VERIFY_MSG_DELETE_TIME)
-    verify_msg = await ctx.author.send(embed=verification_embed(ctx.guild, 19, code))
-    # schedule user to be removed from the verification cache after aset period
+    embed = verification_embed(ctx.guild, 19, code)
+    verify_msg = await ctx.author.send(embed=embed)
+    asyncio.create_task(timed_embed(verify_msg, embed, VERIFICATION_TIMEOUT, verification_expired_embed(ctx.guild)))
+    # schedule user to be removed from the verification cache after a set period
     await asyncio.sleep(VERIFICATION_TIMEOUT)
     if uid in verifications:
         verifications.pop(uid)
-        await ctx.author.send(":rocket: **Your verification attempt for " + ctx.guild.name + " has expired!**")
+        # await ctx.author.send(":rocket: **Your verification attempt for " + ctx.guild.name + " has expired!**")
 
 
 def confirm(uid, ign):
