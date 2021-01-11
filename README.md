@@ -1,0 +1,2 @@
+# SpaceBot
+Rotmg Bot
