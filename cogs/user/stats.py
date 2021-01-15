@@ -36,8 +36,8 @@ async def lb(ctx: Context, args = None):
     
     users = await sql.fetch_leaderboard(gid, uid, args)
 
-    embed=Embed(title="Leaderboard", description="Sorted by %s "%(sortby))
+    embed=Embed(title="Leaderboard", description="Sorted by POINTS")
     for user in users:
-        embed.add_field(name="%s" % (user[0]), value="%s" % (user[1]), inline=False)
+        embed.add_field(name=user[0], value=user[1], inline=False)
 
     await ctx.send(embed=embed)

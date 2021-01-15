@@ -116,26 +116,24 @@ async def fetch_user(gid, uid):
         return None
 
 
-async def fetch_leaderboard(gid, uid, sort='POINTS'):
+async def fetch_leaderboard(gid, uid, sortby=constants.SQL_POINTS):
     if connection is None:
         await log("Please connect to the SQL server before attempting to make queries.", LogLevel.ERROR)
         return None
     try:
         cursor = connection.cursor(buffered=True)
-        query = "SELECT * FROM `%(guild)s` ORDER BY %(sort)s"
-        cursor.execute(query, {
-            'guild': gid,
-            'sort': sort
-        })
+        query = "SELECT * FROM `%(guild)s` ORDER BY %(sort)s DESC"
+        tempquery = "SELECT * FROM `%s` ORDER BY POINTS DESC" % (gid)
+        cursor.execute(tempquery)
 
-        data = cursor.fetchall()
+        data = cursor.fetchmany(10)
         cursor.close()
         if data is None:
             return None
 
         out = []
         for row in data:
-            out.append(row[2], row[9])
+            out.append([row[2], row[9]])
         
         return out
     except Exception as e:
