@@ -26,7 +26,7 @@ class UserCommands(commands.Cog):
     async def hpt(self, ctx: Context):
         await losthalls.start_game(ctx, self.bot)
     
-    @commands.command(aliases = ['lb'])
+    @commands.command(aliases = ['leaderboard'])
     async def lb(self, ctx: Context, *args):
         await stats.lb(ctx, args)
 
