@@ -116,6 +116,35 @@ async def fetch_user(gid, uid):
         return None
 
 
+async def fetch_leaderboard(gid, uid, sort='POINTS'):
+    if connection is None:
+        await log("Please connect to the SQL server before attempting to make queries.", LogLevel.ERROR)
+        return None
+    try:
+        cursor = connection.cursor(buffered=True)
+        query = "SELECT * FROM `%(guild)s` ORDER BY %(sort)s"
+        cursor.execute(query, {
+            'guild': gid,
+            'sort': sort
+        })
+
+        data = cursor.fetchall()
+        cursor.close()
+        if data is None:
+            return None
+
+        out = []
+        for row in data:
+            out.append(row[2], row[9])
+        
+        return out
+    except Exception as e:
+        await log("An error occurred when attempting to fetch user with UID " + str(uid) + ".", LogLevel.ERROR)
+        connection.reconnect(attempts=3, delay=0)
+        await log(e.__str__(), LogLevel.DEBUG)
+        return None
+
+
 async def update_user(uid, column, change, gid):
     try:
         if await fetch_user(gid, uid) is None:

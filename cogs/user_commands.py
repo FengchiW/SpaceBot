@@ -25,6 +25,10 @@ class UserCommands(commands.Cog):
     @commands.command()
     async def hpt(self, ctx: Context):
         await losthalls.start_game(ctx, self.bot)
+    
+    @commands.command(aliases = ['lb'])
+    async def lb(self, ctx: Context, *args):
+        await stats.lb(ctx, args)
 
     @commands.command()
     @commands.dm_only()

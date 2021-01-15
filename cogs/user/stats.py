@@ -24,3 +24,20 @@ async def getstats(ctx: Context, args = None):
     embed.add_field(name="Points", value="%s" % (user[constants.SQL_POINTS]), inline=True)
 
     await ctx.send(embed=embed)
+
+async def lb(ctx: Context, args = None):
+    gid = ctx.guild.id
+    uid = ctx.author.id
+    users = None
+    sortby = "POINTS"
+
+    if not args is None:
+        sortby = args
+    
+    users = await sql.fetch_leaderboard(gid, uid, args)
+
+    embed=Embed(title="Leaderboard", description="Sorted by %s "%(sortby))
+    for user in users:
+        embed.add_field(name="%s" % (user[0]), value="%s" % (user[1]), inline=False)
+
+    await ctx.send(embed=embed)
