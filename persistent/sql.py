@@ -5,6 +5,17 @@ from typing import Dict
 from util.logging import log, LogLevel
 from . import sqlconfig
 
+# settings.py
+from dotenv import load_dotenv
+load_dotenv()
+
+import os
+
+DBHOST = os.getenv("DBHOST")
+DBPORT = os.getenv("DBPORT")
+DBUSER = os.getenv("DBUSER")
+DBPSW  = os.getenv("DBPSW")
+
 connection: MySQLConnection = None
 
 
@@ -27,11 +38,11 @@ async def connect() -> bool:
     try:
         # initialize connection
         connection = mysql.connector.connect(
-            host='li2140-92.members.linode.com',
-            port=3306,
+            host=DBHOST,
+            port=DBPORT,
             database='STD',
-            user='<hidden>',
-            password='<hidden>'
+            user=DBUSER,
+            password=DBPSW
         )
         await log("Successfully connected to the SQL server.")
         await log("Checking config table...")

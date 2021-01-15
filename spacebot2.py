@@ -1,9 +1,5 @@
 from discord.ext import commands
 from discord import Intents, User, Reaction, Message, TextChannel
-import os
-
-# this shit needs to go into an environment variable
-# development bot token
 from discord.ext.commands import CommandNotFound, Context, CommandInvokeError
 from emojis import decode
 from discord import Embed
@@ -15,13 +11,22 @@ from util.logging import log, LogLevel
 import asyncio
 import simplejson as json
 
+# settings.py
+from dotenv import load_dotenv
+load_dotenv()
+
+import os
+
+LIVETOKEN = os.getenv("LIVETOKEN")
+DEVTOKEN = os.getenv("DEVTOKEN")
+
 # dev token, please start using environment variables...
 #Different token
-DISCORD_TOKEN = <USE environment variable>
+DISCORD_TOKEN = LIVETOKEN
 
 
 TOKEN = DISCORD_TOKEN
-VERSION = "0.1.7"
+VERSION = "0.2.7"
 COMMAND_PREFIX = "."
 
 intents = Intents.all()
@@ -53,7 +58,6 @@ async def st():
                                 logchannel = get(guild.channels, id=761788719685435404)
                                 suschannel = get(guild.channels, id=763644055536009216)
                                 embed=Embed(title="User Unsuspended", description="**%s**, He has served his time \n Unsuspender: **SpaceBot**" % (member.display_name))
-                                embed.set_footer(text=current_time)
 
                                 await suschannel.send(embed=embed)
                                 await logchannel.send(embed=embed)
