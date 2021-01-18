@@ -17,19 +17,6 @@ async def create_suspend_list(gid):
             print("Executed config creation query for guild " + str(gid) + ".")
             return True
 
-async def suspend(gid, user, value) -> bool:
-    if await fetch_config(gid) is None:
-        print("Guild with ID %s has no config set up." % gid)
-        return False
-    else:
-        with open("suspended.json", 'r+') as configfile:
-            data = json.loads(configfile.read())
-            data[str(gid)][column] = value
-            configfile.seek(0)
-            json.dump(data, configfile)
-            configfile.close()
-        return True
-
 async def create_config(gid):
     with open(SERVER_CONFIG_DB, 'r+') as configfile:
         data = json.loads(configfile.read())

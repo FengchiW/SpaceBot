@@ -17,7 +17,7 @@ class UserCommands(commands.Cog):
     async def verify(self, ctx: Context):
         await verify.start_verification(ctx)
 
-    @commands.command()
+    @commands.command(aliases=['me'])
     async def stats(self, ctx: Context):
         #await statsembed = stats.getstats(ctx)
         await stats.getstats(ctx)

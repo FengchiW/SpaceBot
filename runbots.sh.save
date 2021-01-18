@@ -1,2 +1,0 @@
-tmux new-session -d -s "myTempSession" python3 Spacebot2/spacebot2.py
-tmux new-session -d -s "myTempSession" python3 
