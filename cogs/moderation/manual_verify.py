@@ -26,7 +26,7 @@ async def manual_verify(ctx: Context, args):
             return m.author.id == member.id
 
         if member is None:
-            await ctx.send(":x: **Can't find this member.**", delete_after=10)
+            await ctx.send(":x: **Can't find this member.**", delete_after=500)
             return
 
         await mv_channel.purge(limit=10, check=check)
@@ -47,6 +47,8 @@ async def manual_verify(ctx: Context, args):
         except Exception as e:
             print(e)
         await ctx.message.add_reaction(constants.EMOJI_CONFIRM)
+
+        await ctx.delete(delay=500)
     except ValueError:
-        await ctx.send(":x: **Argument must be a user's ID or an @mention.**", delete_after=10)
+        await ctx.send(":x: **Argument must be a user's ID or an @mention.**", delete_after=500)
         return
