@@ -14,7 +14,7 @@ async def manual_verify(ctx: Context, bot, args):
         return
     try:
         def check(m):
-            return m.author.id == member.id or member.id == ctx.author.id
+            return m.author.id == member.id or ctx.message.author.id == member.id
 
         await bot.delete_message(ctx.message)
         # prune extraneous symbols from mentions
