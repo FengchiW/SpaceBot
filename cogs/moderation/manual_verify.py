@@ -13,6 +13,7 @@ async def manual_verify(ctx: Context, args):
         await ctx.send(":x: **Usage: ;mv [user ID or mention] [IGN]**")
         return
     try:
+        await ctx.message.delete(delay=2000)
         # prune extraneous symbols from mentions
         uid = int(re.sub('[<!@>]', '', args[0]))
         ign = str(args[1])
@@ -35,7 +36,7 @@ async def manual_verify(ctx: Context, args):
         member_role = get(cfg.guild.roles, id=cfg.verified_role_id)
         # Put the user in the DB if they're not there already, or just update their verification status.
         if await sql.fetch_user(guild.id, uid) is not None:
-            await sql.update_user(uid, constants.SQL_VERIFIED, "True", guild.id)
+            await ctx.send("```:x: User has already been verified```", delete_after=2000)
         else:
             await sql.add_user(guild.id, uid, ign)
         # Then add the verified role and change their nickname.
@@ -47,7 +48,6 @@ async def manual_verify(ctx: Context, args):
         except Exception as e:
             print(e)
         await ctx.message.add_reaction(constants.EMOJI_CONFIRM)
-        await mv_channel.purge(limit=1)
     except ValueError:
         await ctx.send(":x: **Argument must be a user's ID or an @mention.**", delete_after=500)
         return
