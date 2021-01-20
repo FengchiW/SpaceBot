@@ -47,7 +47,7 @@ async def manual_verify(ctx: Context, args):
         except Exception as e:
             print(e)
         await ctx.message.add_reaction(constants.EMOJI_CONFIRM)
-        await ctx.message.delete()
+        await mv_channel.purge(limit=10, check=check)
     except ValueError:
         await ctx.send(":x: **Argument must be a user's ID or an @mention.**", delete_after=500)
         return
