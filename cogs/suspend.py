@@ -88,7 +88,7 @@ class SuspentionCommands(commands.Cog):
             uid = re.sub('[<!@>]', '', args[0])
             reason = None
             if len(args) > 1:
-                reason = args[1:]
+                reason = " ".join(args[1:])
             guild: Guild = ctx.guild
             member: Member = await guild.fetch_member(uid)
             if member is None:
