@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord.ext.commands import Context
 from persistent import sql, server_config, sqlconfig
 from util import constants
-from cogs.moderation import config, manual_verify, survived
+from cogs.moderation import config, manual_verify
 from util.permissions import is_rl_or_higher
 import simplejson as json
 from discord import Embed
@@ -114,7 +114,7 @@ class ModerationCommands(commands.Cog):
             if not data is None:
                 for uid in data:
                     user = ctx.message.guild.get_member(int(uid))
-                    embed.add_field(name="{}".format(user.nick), value="User:**<@!{}>** \n Suspended by: **<@!{}>** \n For Duration **{}** ".format(user.id, data[uid]['suspender'],data[uid]['dur']), inline=True)
+                    embed.add_field(name="{}".format(user.nick), value="User:**<@!{}>** \n Suspended by: **<@!{}>** \n For Duration **{}** mins".format(user.id, data[uid]['suspender'],data[uid]['dur']), inline=True)
             embed.set_footer(text="Space Travel Dungeons")
             await ctx.send(embed=embed)
         except Exception as e:
@@ -122,23 +122,6 @@ class ModerationCommands(commands.Cog):
             embed.set_footer(text="Space Travel Dungeons")
             await ctx.send(embed=embed)
             print(e)
-
-    '''@commands.command(aliases=["lived"])
-    @commands.guild_only()
-    @is_rl_or_higher()
-    async def survived(self, ctx: Context, *args):
-        attachments = ctx.message.attachments
-        if len(attachments) == 0:
-            if len(args) == 0:
-                await ctx.send(":x: **You must attach a screenshot of /list for this command to work.**")
-                return
-            else:
-                img_url = args[0]
-        else:
-            img_url = attachments[0].url
-
-        await ctx.send(await survived.text_from_image(ctx, img_url))'''
-
 
 async def on_reaction_add(reaction: Reaction, user: User):
     pass
