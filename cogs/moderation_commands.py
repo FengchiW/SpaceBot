@@ -114,7 +114,7 @@ class ModerationCommands(commands.Cog):
             if not data is None:
                 for uid in data:
                     user = ctx.message.guild.get_member(int(uid))
-                    embed.add_field(name="{}".format(user.nick), value="User:**<@!{}>** Suspended by: **<@!{}>**, For Duration **{}** ".format(user.id, data[uid]['suspender'],data[uid]['dur']), inline=True)
+                    embed.add_field(name="{}".format(user.nick), value="User:**<@!{}>** \n Suspended by: **<@!{}>** \n For Duration **{}** ".format(user.id, data[uid]['suspender'],data[uid]['dur']), inline=True)
             embed.set_footer(text="Space Travel Dungeons")
             await ctx.send(embed=embed)
         except Exception as e:
