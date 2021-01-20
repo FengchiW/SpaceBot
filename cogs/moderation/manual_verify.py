@@ -10,9 +10,12 @@ from util import constants
 
 async def manual_verify(ctx: Context, bot, args):
     if len(args) < 2:
-        await ctx.send(":x: **Usage: ;mv [user ID or mention] [IGN]**")
+        await ctx.send(":x: **Usage: ;mv [user ID or mention] [IGN]**", delete_after=1000)
         return
     try:
+        def check(m):
+            return m.author.id == member.id or member.id == ctx.author.id
+
         await bot.delete_message(ctx.message)
         # prune extraneous symbols from mentions
         uid = int(re.sub('[<!@>]', '', args[0]))
@@ -22,9 +25,6 @@ async def manual_verify(ctx: Context, bot, args):
         mv_channel = get(guild.channels, id=801591104847347762)
 
         member: Member = await guild.fetch_member(uid)
-
-        def check(m):
-            return m.author.id == member.id or member.id == ctx.author.id
 
         if member is None:
             await ctx.send(":x: **Can't find this member.**", delete_after=500)
@@ -36,7 +36,7 @@ async def manual_verify(ctx: Context, bot, args):
         member_role = get(cfg.guild.roles, id=cfg.verified_role_id)
         # Put the user in the DB if they're not there already, or just update their verification status.
         if not await sql.fetch_user(guild.id, uid) is None:
-            await ctx.send("```:x: User has already been verified```", delete_after=2000)
+            await ctx.send("```:x: User has already been verified```", delete_after=1000)
         else:
             await sql.add_user(guild.id, uid, ign)
         # Then add the verified role and change their nickname.
@@ -47,7 +47,8 @@ async def manual_verify(ctx: Context, bot, args):
             await member.edit(nick=ign)
         except Exception as e:
             print(e)
-        await ctx.message.add_reaction(constants.EMOJI_CONFIRM)
+        
+        await ctx.message.delete(delay=100)
     except ValueError:
         await ctx.send(":x: **Argument must be a user's ID or an @mention.**", delete_after=500)
         return
