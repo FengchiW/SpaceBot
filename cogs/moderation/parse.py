@@ -19,7 +19,7 @@ async def text_from_image(ctx: Context, img_url: str):
             await ctx.send(":x: **The provided URL is invalid.**")
             return
         else:
-            await ctx.send(":globe_with_meridians: **Valid URL. Checking image...**")
+            await ctx.send(":globe_with_meridians: **Valid URL. Checking image...**", delete_after=100)
         # send a request for the image from the given url
         req = Request(img_url, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) '
                                                       'AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -39,7 +39,6 @@ async def text_from_image(ctx: Context, img_url: str):
         img_binary = BytesIO()
         img.save(img_binary, 'PNG')
         img_binary.seek(0)
-        await ctx.send("**Filtered image:**", file=discord.File(fp=img_binary, filename="image.png"))
 
         pre_text1 = image_to_string(opencv_img, lang='eng').split("\n")
         pre_text2 = list(chain.from_iterable([i.split(",") for i in pre_text1]))[1:]

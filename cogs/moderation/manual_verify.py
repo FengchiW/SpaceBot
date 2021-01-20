@@ -17,11 +17,19 @@ async def manual_verify(ctx: Context, args):
         uid = int(re.sub('[<!@>]', '', args[0]))
         ign = str(args[1])
         guild: Guild = ctx.guild
+
+        mv_channel = get(guild.channels, id=801591104847347762)
+
         member: Member = await guild.fetch_member(uid)
+
+        def check(m):
+            return m.author.id == member.id
+
         if member is None:
-            await ctx.send(":x: **Can't find this member.**")
+            await ctx.send(":x: **Can't find this member.**", delete_after=10)
             return
 
+        await mv_channel.purge(limit=10, check=check)
         # Fetch the server's config to get the verified role ID.
         cfg = await server_config.get_config(guild)
         member_role = get(cfg.guild.roles, id=cfg.verified_role_id)
@@ -40,5 +48,5 @@ async def manual_verify(ctx: Context, args):
             print(e)
         await ctx.message.add_reaction(constants.EMOJI_CONFIRM)
     except ValueError:
-        await ctx.send(":x: **Argument must be a user's ID or an @mention.**")
+        await ctx.send(":x: **Argument must be a user's ID or an @mention.**", delete_after=10)
         return
