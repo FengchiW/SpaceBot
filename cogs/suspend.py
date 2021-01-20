@@ -77,14 +77,14 @@ class SuspentionCommands(commands.Cog):
                 embed.set_footer(text=current_time)
                 
                 await member.send(embed=embed)
-                #await suschannel.send(embed=embed)
+                await suschannel.send(embed=embed)
                 await logchannel.send(embed=embed)
             else:
                 embed=Embed(title="Suspension Extended", description="**<@%s>** is now suspended for **%s**.\n Dunce Hat for you.\n Reason: %s,\n Suspender: **<@%s>**" % (member.id, tdur, reason, ctx.author.id), color=0xff4242)
                 embed.set_footer(text=current_time)
                 
                 await member.send(embed=embed)
-                #await suschannel.send(embed=embed)
+                await suschannel.send(embed=embed)
                 await logchannel.send(embed=embed)
             await ctx.message.add_reaction(constants.EMOJI_CONFIRM)
         except Exception as e:
