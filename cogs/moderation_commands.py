@@ -98,7 +98,7 @@ class ModerationCommands(commands.Cog):
     @commands.guild_only()
     @is_rl_or_higher()
     async def manualverify(self, ctx: Context, *args):
-        await manual_verify.manual_verify(ctx, args)
+        await manual_verify.manual_verify(ctx, self.bot, args)
 
     @commands.command(aliases=['sl'])
     @commands.guild_only()

@@ -8,12 +8,12 @@ from persistent import server_config, sql
 from util import constants
 
 
-async def manual_verify(ctx: Context, args):
+async def manual_verify(ctx: Context, bot, args):
     if len(args) < 2:
         await ctx.send(":x: **Usage: ;mv [user ID or mention] [IGN]**")
         return
     try:
-        await ctx.message.delete(delay=2000)
+        await bot.delete_message(ctx.message)
         # prune extraneous symbols from mentions
         uid = int(re.sub('[<!@>]', '', args[0]))
         ign = str(args[1])
@@ -35,7 +35,7 @@ async def manual_verify(ctx: Context, args):
         cfg = await server_config.get_config(guild)
         member_role = get(cfg.guild.roles, id=cfg.verified_role_id)
         # Put the user in the DB if they're not there already, or just update their verification status.
-        if await sql.fetch_user(guild.id, uid) is not None:
+        if not await sql.fetch_user(guild.id, uid) is None:
             await ctx.send("```:x: User has already been verified```", delete_after=2000)
         else:
             await sql.add_user(guild.id, uid, ign)
