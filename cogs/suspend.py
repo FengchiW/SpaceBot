@@ -22,6 +22,7 @@ class SuspentionCommands(commands.Cog):
             uid = re.sub('[<!@>]', '', args[0])
             dur = str(args[1])
             tdur = dur
+            alreadysuspend = False
             if any(c.isalpha() for c in dur):
                 t = int(dur[:-1])
                 x = dur[-1]
@@ -46,10 +47,14 @@ class SuspentionCommands(commands.Cog):
             with open("suspend.log", 'r+') as sl:
                 data = json.loads(sl.read())
                 if uid in data:
+                    alreadysuspend = True
                     await ctx.send(":x: **Member already suspended, time will be added to the suspension, if this was a mistake type ;s [user] [-duration].**")
-                    data[uid] = int(data[uid]) + int(dur)
+                    data[uid]['dur'] = int(data[uid]['dur']) + int(dur)
+                    tdur = int(data[uid]['dur']) + int(dur)
                 else:
-                    data[uid] = int(dur) 
+                    data[uid] = {}
+                    data[uid]['dur'] = int(dur) 
+                data[uid]['suspender'] = ctx.message.author.id
                 sl.seek(0)
                 json.dump(data, sl)
                 sl.truncate()
@@ -67,12 +72,20 @@ class SuspentionCommands(commands.Cog):
             t = time.localtime()
             current_time = time.strftime("%H:%M:%S", t)
 
-            embed=Embed(title="User Suspended", description="**<@%s>** Suspended for **%s**.\n Dunce Hat for you.\n Reason: %s,\n Suspender: **<@%s>**" % (member.id, tdur, reason, ctx.author.id), color=0xff4242)
-            embed.set_footer(text=current_time)
-            
-            await member.send(embed=embed)
-            await suschannel.send(embed=embed)
-            await logchannel.send(embed=embed)
+            if not alreadysuspend:
+                embed=Embed(title="User Suspended", description="**<@%s>** Suspended for **%s**.\n Dunce Hat for you.\n Reason: %s,\n Suspender: **<@%s>**" % (member.id, tdur, reason, ctx.author.id), color=0xff4242)
+                embed.set_footer(text=current_time)
+                
+                await member.send(embed=embed)
+                #await suschannel.send(embed=embed)
+                await logchannel.send(embed=embed)
+            else:
+                embed=Embed(title="Suspension Extended", description="**<@%s>** is now suspended for **%s**.\n Dunce Hat for you.\n Reason: %s,\n Suspender: **<@%s>**" % (member.id, tdur, reason, ctx.author.id), color=0xff4242)
+                embed.set_footer(text=current_time)
+                
+                await member.send(embed=embed)
+                #await suschannel.send(embed=embed)
+                await logchannel.send(embed=embed)
             await ctx.message.add_reaction(constants.EMOJI_CONFIRM)
         except Exception as e:
             embed=Embed(description="**.suspend\n**     Suspend Command.\n     **Usage:** \`.suspend <@ user> <length> <reason>\`\n     **<@ user>:** a mention of the user.\n     **<length>** The length of time, in \`m, h, or d\`. E.g. 2d, 3h, 10m.\n     **<reason>** The reason for suspension. Please be specific.\n     _Example:_ \`.suspend @Daryl 2d being too cute for the server.\`", color=0x2ffef7)

@@ -34,7 +34,7 @@ class UserCommands(commands.Cog):
     @commands.dm_only()
     async def confirm(self, ctx: Context, *args):
         if len(args) == 0:
-            await ctx.send("**Usage: `;confirm [IGN]`**")
+            await ctx.send("**Usage: `.confirm [IGN]`**")
         else:
             await ctx.send(await verify.confirm(ctx.author, args[0]))
 

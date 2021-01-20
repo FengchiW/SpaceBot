@@ -46,7 +46,7 @@ async def st():
             dellist = []
             for uid in data:
                 member = await guild.fetch_member(uid)
-                if data[uid] <= 0:
+                if data[uid]['dur'] <= 0:
                     print("unsupending user")
                     if member is None:
                         print("Error Null Member")
@@ -65,7 +65,7 @@ async def st():
                             print(e)
                     dellist.append(uid)
                 else:
-                    data[uid] = data[uid] - 1
+                    data[uid]['dur'] = data[uid]['dur'] - 1
             for uid in dellist:
                 data.pop(uid, None)
             sl.seek(0)

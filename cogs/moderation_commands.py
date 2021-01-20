@@ -7,6 +7,7 @@ from cogs.moderation import config, manual_verify, survived
 from util.permissions import is_rl_or_higher
 import simplejson as json
 from discord import Embed
+from discord.utils import get
 
 developers = [218169424132177920, 235241036388106241]
 
@@ -109,10 +110,11 @@ class ModerationCommands(commands.Cog):
                 data = json.loads(sl.read())
                 sl.close()
 
-            embed=Embed(title="Suspended Users", description="%s"%(ctx.author.display_name))
+            embed=Embed(title="Suspended Users", description="Current suspended users")
             if not data is None:
-                for user in data:
-                    embed.add_field(name="<@!{}>".format(user), value="Suspended by: Error, For Duration {} ".format(data[user]), inline=True)
+                for uid in data:
+                    user = ctx.message.guild.get_member(int(uid))
+                    embed.add_field(name="{}".format(user.nick), value="User:**<@!{}>** Suspended by: **<@!{}>**, For Duration **{}** ".format(user.id, data[uid]['suspender'],data[uid]['dur']), inline=True)
             embed.set_footer(text="Space Travel Dungeons")
             await ctx.send(embed=embed)
         except Exception as e:
