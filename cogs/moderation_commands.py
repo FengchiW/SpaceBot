@@ -112,7 +112,7 @@ class ModerationCommands(commands.Cog):
             embed=Embed(title="Suspended Users", description="%s"%(ctx.author.display_name))
             if not data is None:
                 for user in data:
-                    embed.add_field(name="<@{}>".format(user), value="Suspended by: Error, For Duration {} ".format(data[user]), inline=True)
+                    embed.add_field(name="<@!{}>".format(user), value="Suspended by: Error, For Duration {} ".format(data[user]), inline=True)
             embed.set_footer(text="Space Travel Dungeons")
             await ctx.send(embed=embed)
         except Exception as e:
