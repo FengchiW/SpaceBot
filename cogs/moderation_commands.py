@@ -5,6 +5,8 @@ from persistent import sql, server_config, sqlconfig
 from util import constants
 from cogs.moderation import config, manual_verify, survived
 from util.permissions import is_rl_or_higher
+import simplejson as json
+from discord import Embed
 
 developers = [218169424132177920, 235241036388106241]
 
@@ -96,6 +98,28 @@ class ModerationCommands(commands.Cog):
     @is_rl_or_higher()
     async def manualverify(self, ctx: Context, *args):
         await manual_verify.manual_verify(ctx, args)
+
+    @commands.command(aliases=['sl'])
+    @commands.guild_only()
+    @is_rl_or_higher()
+    async def suspendlist(self, ctx: Context):
+        try:
+            data = None
+            with open("suspend.log", 'r+') as sl:
+                data = json.loads(sl.read())
+                sl.close()
+
+            embed=Embed(title="Suspended Users", description="%s"%(ctx.author.display_name))
+            if not data is None:
+                for user in data:
+                    embed.add_field(name="<@{}>".format(user), value="Suspended by: Error, For Duration {} ".format(data[user]), inline=True)
+            embed.set_footer(text="Space Travel Dungeons")
+            await ctx.send(embed=embed)
+        except Exception as e:
+            embed=Embed(description="**.suspendlist -> lists all currently suspended players", color=0x2ffef7)
+            embed.set_footer(text="Space Travel Dungeons")
+            await ctx.send(embed=embed)
+            print(e)
 
     '''@commands.command(aliases=["lived"])
     @commands.guild_only()
