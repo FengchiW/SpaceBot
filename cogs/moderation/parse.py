@@ -42,7 +42,7 @@ async def text_from_image(ctx: Context, img_url: str):
         await ctx.send("**Filtered image:**", file=discord.File(fp=img_binary, filename="image.png"))
 
         pre_text1 = image_to_string(opencv_img, lang='eng').split("\n")
-        pre_text2 = list(chain.from_iterable([i.split(",") for i in pre_text1]))[:-1]
+        pre_text2 = list(chain.from_iterable([i.split(",") for i in pre_text1]))[1:]
         text = [x.lower().strip() for x in pre_text2]
 
         channel = ctx.author.voice.channel
