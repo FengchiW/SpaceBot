@@ -42,7 +42,7 @@ async def text_from_image(ctx: Context, img_url: str):
         img.save(img_binary, 'PNG')
         img_binary.seek(0)
 
-        pre_text1 = image_to_string(opencv_img, lang='eng').split("\n")
+        pre_text1 = image_to_string(opencv_img).split("\n")
         pre_text2 = list(chain.from_iterable([i.split(",") for i in pre_text1]))[1:]
         text = [x.lower().strip() for x in pre_text2]
 
@@ -61,7 +61,7 @@ async def text_from_image(ctx: Context, img_url: str):
                     tobeparsed += player + ", "
         
         if text != "":
-            embed=Embed(title="Hey %s" % (ctx.message.author.display_name), description="The following users from /who are not in **__your__** voice channel:\n %s" % (tobeparsed), color=0x2ffef7)
+            embed=Embed(title="Hey %s" % (ctx.message.author.display_name), description="The following users from /who are not in **__your__** voice channel:\n `%s`" % (tobeparsed), color=0x2ffef7)
             await ctx.send(embed=embed)
         else:
             await ctx.send(":clipboard: **This image contains no text.**")
