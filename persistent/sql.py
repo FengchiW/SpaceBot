@@ -169,25 +169,29 @@ async def update_user(uid, column, change, gid):
         print("Update User Fail", e)
         return "ERROR"
 
-async def log_changes(uid, gid, change, amount, points):
+async def log_run(uid, t, r = 0):
     try:
-        if await fetch_user(gid, uid) is None:
-            await add_user("Null", gid, uid)
+        if await fetch_staff(uid) is None:
+            await addstaff(addstaff, 0, -100)
         if not connection is None:
             cursor = connection.cursor()
-
-            sql = "UPDATE `%(guild)s` SET {} = {} + %(value)s WHERE UID = %(user)s".format(
-                change, change)  # This is fine because Colunm modified is constant
-
-            cursor.execute(sql, {'guild': gid,
-                                 'value': amount,
-                                 'user': uid})
+            sql = ""
+            if t == 0:
+                sql = "UPDATE std_staff SET HALLS_LED = HALLS_LED + 1, POINTS = POINTS + 5, ALLTIME = ALLTIME + 5, POT_RATIO = ((POT_RATIO * (HALLS_LED - 1)) +"+str(r)+")/HALLS_LED WHERE UID = %(user)s"
+            elif t == 1:
+                sql = "UPDATE std_staff SET O3_LED = O3_LED + 1, POINTS = POINTS + 7, ALLTIME = ALLTIME + 7 WHERE UID = %(user)s"
+            elif t == 2:
+                sql = "UPDATE std_staff SET EXALT_LED = EXALT_LED + 1, POINTS = POINTS + 3, ALLTIME = ALLTIME + 3 WHERE UID = %(user)s"
+            elif t == 3:
+                sql = "UPDATE std_staff SET OTHER_LED = OTHER_LED + 1, POINTS = POINTS + 2, ALLTIME = ALLTIME + 2 WHERE UID = %(user)s"
+            else:
+                sql = "UPDATE std_staff SET FAILED_RUNS = FAILED_RUNS + 1, POINTS = POINTS + 3, ALLTIME = ALLTIME + 3 WHERE UID = %(user)s"
+            cursor.execute(sql, {'user': uid})
             connection.commit()
             cursor.close()
-            return "Edited User %s %s %s" % (change, amount, uid)
+            print("Edited User %s %s %s" % (uid, t, r))
         else:
             print("Something went wrong")
-
             return "Failed to add User"
     except Error as e:
         print("Update User Fail", e)
@@ -227,9 +231,9 @@ async def fetch_staff(uid):
 
         out: Dict = {
             'uid': data[0],
-            'o3': data[1],
-            'halls': data[2],
-            'exalt': data[3],
+            'exalt': data[1],
+            'o3': data[2],
+            'halls': data[3],
             'other': data[4],
             'rolelevel': data[5],
             'points': data[6],
@@ -247,7 +251,7 @@ async def fetch_staff(uid):
         await log(e.__str__(), LogLevel.DEBUG)
         return None
 
-async def addstaff(uid, level=0):
+async def addstaff(uid, level=0, pnts = 0):
     if connection is None:
         await log("Please connect to the SQL server before attempting to insert data.", LogLevel.ERROR)
         return False
@@ -256,9 +260,10 @@ async def addstaff(uid, level=0):
         return False
     try:
         cursor = connection.cursor()
-        query = "INSERT INTO std_staff VALUES (%(user)s, 0, 0, 0, 0, %(level)s, 0, 0, 0, 0, false, 0)"
+        query = "INSERT INTO std_staff VALUES (%(user)s, 0, 0, 0, 0, %(level)s, 0, %(points)s, 0, 0, false, 0)"
         cursor.execute(query, {'user': uid,
-                               'level': level})
+                               'level': level,
+                               'points': pnts})
         connection.commit()
         cursor.close()
         return True
