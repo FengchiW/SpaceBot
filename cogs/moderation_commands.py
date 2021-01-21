@@ -4,7 +4,7 @@ from discord.ext.commands import Context
 from persistent import sql, server_config, sqlconfig
 from util import constants
 from cogs.moderation import config, manual_verify, staff_verify
-from util.permissions import is_rl_or_higher, is_staff
+from util.permissions import is_rl_or_higher, is_staff, is_admin
 import simplejson as json
 from discord import Embed
 from discord.utils import get
@@ -153,7 +153,12 @@ class ModerationCommands(commands.Cog):
         embed.add_field(name="On Leave: ",         value="%s"   % (user['leave']),            inline=True)
         embed.add_field(name="Warnings: ",         value="%s"   % (user['warn']),             inline=True)
         await ctx.send(embed=embed)
-        
+    
+    @commands.command()
+    @is_admin()
+    async def resetstaff(self, ctx):
+        await sql.reset_all()
+        await ctx.send('done')
     
 async def on_reaction_add(reaction: Reaction, user: User):
     pass

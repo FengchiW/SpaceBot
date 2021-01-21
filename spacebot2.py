@@ -73,6 +73,9 @@ async def st():
             sl.truncate()
             sl.close()
 
+async def pt():
+    pass
+
 @client.event
 async def on_ready():
     await log(f'{client.user.name} v{VERSION} has connected to Discord!')

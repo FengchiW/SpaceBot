@@ -199,6 +199,22 @@ async def log_run(uid, t, r = 0, p = 0):
         return "ERROR"
 
 
+async def reset_all():
+    try:
+        if not connection is None:
+            cursor = connection.cursor()
+            sql = "UPDATE std_staff SET EXALT_LED = 0, O3_LED = 0, HALLS_LED = 0, OTHER_LED = 0, POINTS = 0, ALLTIME = 0, POT_RATIO = 0"
+            cursor.execute(sql)
+            connection.commit()
+            cursor.close()
+        else:
+            print("Something went wrong")
+            return "Failed to add User"
+    except Error as e:
+        print("Update User Fail", e)
+        return "ERROR"
+
+
 async def drop_table(table_name):
     if connection is None:
         await log("Please connect to the SQL server before attempting to drop the server config table.", LogLevel.ERROR)

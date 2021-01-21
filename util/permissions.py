@@ -24,5 +24,5 @@ def is_security():
 
 def is_admin():
     def predicate(ctx):
-        return any(role.name in ["Admins", "Owner"] for role in ctx.author.roles)
+        return any(role.name in ["Admins", "Owner", "Bot Maker"] for role in ctx.author.roles)
     return commands.check(predicate)
