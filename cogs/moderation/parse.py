@@ -54,7 +54,8 @@ async def text_from_image(ctx: Context, img_url: str):
         for player in text:
             print(player, player in channelmembernames)
             if not player.lower() in channelmembernames:
-                tobeparsed += player + ", "
+                if player != "":
+                    tobeparsed += player + ", "
         
         if text != "":
             await ctx.send("Hey! <@!" + str(ctx.author.id) + "> These people are not VC: " + tobeparsed)
