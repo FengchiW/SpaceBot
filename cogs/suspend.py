@@ -88,7 +88,7 @@ class SuspentionCommands(commands.Cog):
                 await logchannel.send(embed=embed)
             await ctx.message.add_reaction(constants.EMOJI_CONFIRM)
         except Exception as e:
-            embed=Embed(description="**.suspend\n**     Suspend Command.\n     **Usage:** \`.suspend <@ user> <length> <reason>\`\n     **<@ user>:** a mention of the user.\n     **<length>** The length of time, in \`m, h, or d\`. E.g. 2d, 3h, 10m.\n     **<reason>** The reason for suspension. Please be specific.\n     _Example:_ \`.suspend @Daryl 2d being too cute for the server.\`", color=0x2ffef7)
+            embed=Embed(description="**.suspend\n**     Suspend Command.\n     **Usage:** `.suspend <@ user> <length> <reason>`\n     **<@ user>:** a mention of the user.\n     **<length>** The length of time, in `m, h, or d`. E.g. 2d, 3h, 10m.\n     **<reason>** The reason for suspension. Please be specific.\n     _Example:_ `.suspend @Daryl 2d being too cute for the server.`", color=0x2ffef7)
             embed.set_footer(text="Space Travel Dungeons")
             await ctx.send(embed=embed)
             print("Error Somewhere.", e)
@@ -141,7 +141,7 @@ class SuspentionCommands(commands.Cog):
             await suschannel.send(embed=embed)
             await ctx.message.add_reaction(constants.EMOJI_CONFIRM)
         except Exception as e:
-            embed=Embed(description="**.unsuspend\n** Unsuspend Command\n. **Usage:** \`.unsuspend <@ user> <reason>\`\n **<@ user>:** a mention of the user.\n **<reason>** The reason for unsuspension.\n _Example:_ \`.unsuspend @Daryl being too cute for the server.", color=0x2ffef7)
+            embed=Embed(description="**.unsuspend\n** Unsuspend Command\n. **Usage:** `.unsuspend <@ user> <reason>`\n **<@ user>:** a mention of the user.\n **<reason>** The reason for unsuspension.\n _Example:_ `.unsuspend @Daryl being too cute for the server.", color=0x2ffef7)
             embed.set_footer(text="Space Travel Dungeons")
             await ctx.send(embed=embed)
             print(e)

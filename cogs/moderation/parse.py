@@ -8,6 +8,7 @@ from urllib.request import Request, urlopen
 from io import BytesIO
 import validators
 from itertools import chain
+from discord import Embed
 import re
 
 from util.logging import log, LogLevel
@@ -60,7 +61,8 @@ async def text_from_image(ctx: Context, img_url: str):
                     tobeparsed += player + ", "
         
         if text != "":
-            await ctx.send("Hey! <@!" + str(ctx.author.id) + "> These people are not VC: " + tobeparsed)
+            embed=Embed(title="Hey %s" % (ctx.message.author.display_name), description="The following users from /who are not in **__your__** voice channel:\n %s" % (tobeparsed), color=0x2ffef7)
+            await ctx.send(embed=embed)
         else:
             await ctx.send(":clipboard: **This image contains no text.**")
     except IOError as e:
