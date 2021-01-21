@@ -136,9 +136,11 @@ class ModerationCommands(commands.Cog):
         uid = ctx.author.id
         if not name is None:
             uid = int(re.sub('[<!@>]', '', name))
+        print(name, uid)
+        
         user = await sql.fetch_staff(uid)
 
-        embed=Embed(title="Staff Stats", description="%s"%(ctx.author.display_name))
+        embed=Embed(title="Staff Stats", description="<@!%s>" % (uid))
         embed.add_field(name="O3's led: ",   value="%s"   % (user['o3']), inline=True)
         embed.add_field(name="Halls led: ",  value="%s"   % (user['halls']), inline=True)
         embed.add_field(name="Exaltations Led: ",  value="%s"   % (user['exalt']), inline=True)
