@@ -15,7 +15,7 @@ async def manual_verify(ctx: Context, bot, args):
     try:
         def check(m):
             return m.author.id == member.id or ctx.message.author.id == member.id
-            
+
         # prune extraneous symbols from mentions
         uid = int(re.sub('[<!@>]', '', args[0]))
         ign = str(args[1])
@@ -48,6 +48,6 @@ async def manual_verify(ctx: Context, bot, args):
             print(e)
         
         await ctx.message.delete(delay=100)
-    except ValueError:
-        await ctx.send(":x: **Argument must be a user's ID or an @mention.**", delete_after=500)
+    except ValueError as e:
+        await ctx.send(":x: **Argument must be a user's ID or an @mention.** %s " % (e), delete_after=500)
         return
