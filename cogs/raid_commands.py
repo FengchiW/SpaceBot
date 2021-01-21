@@ -31,27 +31,25 @@ class RaidCommands(commands.Cog):
     @commands.command(aliases=["e", "log", "l"])
     @commands.guild_only()
     @is_staff()
-    async def logrun(self, ctx: Context, runs=None, t=None, usr=None, pots=3):
-        uid = ctx.author.id
+    async def logrun(self, ctx: Context, runs=None, t=None, usr='0', pots=3):
         p = pots
         if runs is None or t is None:
             await ctx.send("```Error invalid usage,\n `Usage: .l <runs> <type (see below)> <uid/mention (*optional yourself if none)> <pots (*optional default=3)>` \n  `Types: (halls, o3, exalt, misc, failed)````")
-        if not uid is None:
-            uid = re.sub('[<!@>]', '', usr)
-            if int(uid) < 10:
-                p = int(uid)
-                uid = ctx.author.id
+        uid = re.sub('[<!@>]', '', usr)
+        if int(uid) < 10:
+            p = int(uid)
+            uid = ctx.author.id
 
         if t.lower() == "halls" or t.lower == 'lh':
-            await sql.log_run(uid, 0, pots)
+            await sql.log_run(uid, 0, runs, pots)
         elif t.lower() == "o3":
-            await sql.log_run(uid, 1)
+            await sql.log_run(uid, 1, runs)
         elif t.lower() == "exalt":
-            await sql.log_run(uid, 2)
+            await sql.log_run(uid, 2, runs)
         elif t.lower() == "misc":
-            await sql.log_run(uid, 3)
+            await sql.log_run(uid, 3, runs)
         elif t.lower() == "failed":
-            await sql.log_run(uid, 4)
+            await sql.log_run(uid, 4, runs)
         
         await ctx.message.add_reaction(constants.EMOJI_CONFIRM)
 #    @commands.command(aliases=['hc'])

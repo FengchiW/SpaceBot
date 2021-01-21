@@ -169,7 +169,7 @@ async def update_user(uid, column, change, gid):
         print("Update User Fail", e)
         return "ERROR"
 
-async def log_run(uid, t, r = 0):
+async def log_run(uid, t, r = 0, p = 0):
     try:
         if await fetch_staff(uid) is None:
             await addstaff(addstaff, 0, -100)
@@ -177,16 +177,17 @@ async def log_run(uid, t, r = 0):
             cursor = connection.cursor()
             sql = ""
             if t == 0:
-                sql = "UPDATE std_staff SET HALLS_LED = HALLS_LED + 1, POINTS = POINTS + 5, ALLTIME = ALLTIME + 5, POT_RATIO = ((POT_RATIO * (HALLS_LED - 1)) +"+str(r)+")/HALLS_LED WHERE UID = %(user)s"
+                sql = "UPDATE std_staff SET HALLS_LED = HALLS_LED + %(runs)s, POINTS = POINTS + 5 * %(runs)s, ALLTIME = ALLTIME + 5 * %(runs)s, POT_RATIO = ((POT_RATIO * (HALLS_LED - 1)) +"+str(r)+")/HALLS_LED WHERE UID = %(user)s"
             elif t == 1:
-                sql = "UPDATE std_staff SET O3_LED = O3_LED + 1, POINTS = POINTS + 7, ALLTIME = ALLTIME + 7 WHERE UID = %(user)s"
+                sql = "UPDATE std_staff SET O3_LED = O3_LED + %(runs)s, POINTS = POINTS + 8 * %(runs)s, ALLTIME = ALLTIME + 8 * %(runs)s WHERE UID = %(user)s"
             elif t == 2:
-                sql = "UPDATE std_staff SET EXALT_LED = EXALT_LED + 1, POINTS = POINTS + 3, ALLTIME = ALLTIME + 3 WHERE UID = %(user)s"
+                sql = "UPDATE std_staff SET EXALT_LED = EXALT_LED + %(runs)s, POINTS = POINTS + 3 * %(runs)s, ALLTIME = ALLTIME + 3 * %(runs)s WHERE UID = %(user)s"
             elif t == 3:
-                sql = "UPDATE std_staff SET OTHER_LED = OTHER_LED + 1, POINTS = POINTS + 2, ALLTIME = ALLTIME + 2 WHERE UID = %(user)s"
+                sql = "UPDATE std_staff SET OTHER_LED = OTHER_LED + %(runs)s, POINTS = POINTS + 2 * %(runs)s, ALLTIME = ALLTIME + 2 * %(runs)s WHERE UID = %(user)s"
             else:
-                sql = "UPDATE std_staff SET FAILED_RUNS = FAILED_RUNS + 1, POINTS = POINTS + 3, ALLTIME = ALLTIME + 3 WHERE UID = %(user)s"
-            cursor.execute(sql, {'user': uid})
+                sql = "UPDATE std_staff SET FAILED_RUNS = FAILED_RUNS + %(runs)s, POINTS = POINTS + %(runs)s, ALLTIME = ALLTIME + 1 * %(runs)s WHERE UID = %(user)s"
+            cursor.execute(sql, {'user': uid,
+                                'runs': r})
             connection.commit()
             cursor.close()
             print("Edited User %s %s %s" % (uid, t, r))
