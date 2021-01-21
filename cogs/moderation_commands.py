@@ -4,7 +4,7 @@ from discord.ext.commands import Context
 from persistent import sql, server_config, sqlconfig
 from util import constants
 from cogs.moderation import config, manual_verify, staff_verify
-from util.permissions import is_rl_or_higher
+from util.permissions import is_rl_or_higher, is_staff
 import simplejson as json
 from discord import Embed
 from discord.utils import get
@@ -125,12 +125,12 @@ class ModerationCommands(commands.Cog):
     
     @commands.command(aliases=['rs', 'registerstaff'])
     @commands.guild_only()
-    @is_rl_or_higher()
+    @is_staff()
     async def register(self, ctx: Context, *args):
         await staff_verify.rs(ctx, args)
     
     @commands.command(aliases=['ss'])
-    @is_rl_or_higher()
+    @is_staff()
     async def staffstats(self, ctx: Context, *args):
         uid = ctx.author.id
 
