@@ -8,6 +8,7 @@ from util.permissions import is_rl_or_higher, is_staff
 import simplejson as json
 from discord import Embed
 from discord.utils import get
+import re
 
 developers = [218169424132177920, 235241036388106241]
 
@@ -131,9 +132,10 @@ class ModerationCommands(commands.Cog):
     
     @commands.command(aliases=['ss'])
     @is_staff()
-    async def staffstats(self, ctx: Context, *args):
+    async def staffstats(self, ctx: Context, name=None):
         uid = ctx.author.id
-
+        if not name is None:
+            uid = int(re.sub('[<!@>]', '', name))
         user = await sql.fetch_staff(uid)
 
         embed=Embed(title="Staff Stats", description="%s"%(ctx.author.display_name))
