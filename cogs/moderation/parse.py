@@ -51,6 +51,8 @@ async def text_from_image(ctx: Context, img_url: str):
 
         channelmembernames = [re.sub(r'[^a-z]', '', member.display_name.lower()) for member in channel.members]
 
+        print(channelmembernames)
+
         for player in text:
             print(player, player in channelmembernames)
             if not player.lower() in channelmembernames:
