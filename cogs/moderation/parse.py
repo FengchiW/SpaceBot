@@ -8,6 +8,7 @@ from urllib.request import Request, urlopen
 from io import BytesIO
 import validators
 from itertools import chain
+import re
 
 from util.logging import log, LogLevel
 
@@ -42,7 +43,7 @@ async def text_from_image(ctx: Context, img_url: str):
 
         pre_text1 = image_to_string(opencv_img, lang='eng').split("\n")
         pre_text2 = list(chain.from_iterable([i.split(",") for i in pre_text1]))[1:]
-        text = [x.lower().strip() for x in pre_text2]
+        text = [re.sub(r'[^a-z]', '', x.lower().strip()) for x in pre_text2]
 
         channel = ctx.author.voice.channel
 
