@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord.ext.commands import Context
 from persistent import sql, server_config, sqlconfig
 from util import constants
-from cogs.moderation import config, manual_verify
+from cogs.moderation import config, manual_verify, staff_verify
 from util.permissions import is_rl_or_higher
 import simplejson as json
 from discord import Embed
@@ -122,7 +122,34 @@ class ModerationCommands(commands.Cog):
             embed.set_footer(text="Space Travel Dungeons")
             await ctx.send(embed=embed)
             print(e)
+    
+    @commands.command(aliases=['rs', 'registerstaff'])
+    @commands.guild_only()
+    @is_rl_or_higher()
+    async def register(self, ctx: Context, *args):
+        await staff_verify.rs(ctx, args)
+    
+    @commands.command(aliases=['ss'])
+    @is_rl_or_higher()
+    async def staffstats(self, ctx: Context, *args):
+        uid = ctx.author.id
 
+        user = await sql.fetch_staff(uid)
+
+        embed=Embed(title="Staff Stats", description="%s"%(ctx.author.display_name))
+        embed.add_field(name="O3's led: ",   value="%s"   % (user['o3']), inline=True)
+        embed.add_field(name="Halls led: ",  value="%s"   % (user['halls']), inline=True)
+        embed.add_field(name="Exaltations Led: ",  value="%s"   % (user['exalt']), inline=True)
+        embed.add_field(name="Misc Led: ",     value="%s"   % (user['other']), inline=True)
+        embed.add_field(name="Weekly Points: ",   value="%s"   % (user['points']), inline=True)
+        embed.add_field(name="Required Points: ", value="%s"   % ((user['rolelevel']+1)*10), inline=True)
+        embed.add_field(name="All Time Points: ", value="%s"   % (user['alltime']), inline=True)
+        embed.add_field(name="Pot Ratio: ", value="%s"   % (user['potratio']), inline=True)
+        embed.add_field(name="Failed Runs: ", value="%s"   % (user['failed']), inline=True)
+        embed.add_field(name="On Leave: ", value="%s"   % (user['leave']), inline=True)
+        embed.add_field(name="Warnings: ", value="%s"   % (user['warn']), inline=True)
+        await ctx.send(embed=embed)
+        
 async def on_reaction_add(reaction: Reaction, user: User):
     pass
 

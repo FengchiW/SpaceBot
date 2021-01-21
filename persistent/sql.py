@@ -209,3 +209,60 @@ async def drop_table(table_name):
     except Exception as e:
         await log("Error encountered while attempting to drop table %s from SQL server." % table_name, LogLevel.ERROR)
         await log(e.__str__(), LogLevel.DEBUG)
+
+async def fetch_staff(uid):
+    if connection is None:
+        await log("Please connect to the SQL server before attempting to make queries.", LogLevel.ERROR)
+        return None
+    try:
+        cursor = connection.cursor(buffered=True)
+        query = "SELECT DISTINCT * FROM std_staff WHERE uid = %(user)s"
+        cursor.execute(query, {
+            'user': uid
+        })
+        data = cursor.fetchone()
+        cursor.close()
+        if data is None:
+            return None
+
+        out: Dict = {
+            'uid': data[0],
+            'o3': data[1],
+            'halls': data[2],
+            'exalt': data[3],
+            'other': data[4],
+            'rolelevel': data[5],
+            'points': data[6],
+            'alltime': data[7],
+            'potratio': data[8],
+            'failed': data[9],
+            'leave': data[10],
+            'warn': data[11]
+        }
+        
+        return out
+    except Exception as e:
+        await log("An error occurred when attempting to fetch user with UID " + str(uid) + ".", LogLevel.ERROR)
+        connection.reconnect(attempts=3, delay=0)
+        await log(e.__str__(), LogLevel.DEBUG)
+        return None
+
+async def addstaff(uid, level=0):
+    if connection is None:
+        await log("Please connect to the SQL server before attempting to insert data.", LogLevel.ERROR)
+        return False
+    if await fetch_staff(uid) is not None:
+        await log("User " + uid + " already exists in the database.", LogLevel.WARN)
+        return False
+    try:
+        cursor = connection.cursor()
+        query = "INSERT INTO std_staff VALUES (%(user)s, 0, 0, 0, 0, %(level)s, 0, 0, 0, 0, false, 0)"
+        cursor.execute(query, {'user': uid,
+                               'level': level})
+        connection.commit()
+        cursor.close()
+        return True
+    except Error as e:
+        await log("An error occurred while adding a user.", LogLevel.ERROR)
+        await log(e.__str__(), LogLevel.DEBUG)
+        return False
