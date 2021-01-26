@@ -202,7 +202,7 @@ async def reset_all():
     try:
         if not connection is None:
             cursor = connection.cursor()
-            sql = "UPDATE std_staff SET EXALT_LED = 0, O3_LED = 0, HALLS_LED = 0, OTHER_LED = 0, POINTS = 0, ALLTIME = 0, POT_RATIO = 0, WARNING = 0"
+            sql = "UPDATE std_staff SET EXALT_LED = 0, O3_LED = 0, HALLS_LED = 0, OTHER_LED = 0, FAILED_RUNS = 0, POINTS = 0, ALLTIME = 0, POT_RATIO = 0, WARNING = 0"
             cursor.execute(sql)
             connection.commit()
             cursor.close()
@@ -212,6 +212,27 @@ async def reset_all():
     except Error as e:
         print("Update User Fail", e)
         return "ERROR"
+
+async def get_staff_list(): # Incomplete
+    if connection is None:
+        await log("Please connect to the SQL server before attempting to make queries.", LogLevel.ERROR)
+        return None
+    try:
+        cursor = connection.cursor(buffered=True)
+        query = "SELECT UID, POINTS FROM std_staff"
+        cursor.execute(query)
+        data = cursor.fetchall()
+        cursor.close()
+        if data is None:
+            return None
+        
+        return data
+    except Exception as e:
+        await log("An error occurred when attempting to fetch user with UID " + str(uid) + ".", LogLevel.ERROR)
+        connection.reconnect(attempts=3, delay=0)
+        await log(e.__str__(), LogLevel.DEBUG)
+        return None
+
 
 async def rollover():
     try:
