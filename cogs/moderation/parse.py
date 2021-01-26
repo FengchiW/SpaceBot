@@ -50,15 +50,14 @@ async def text_from_image(ctx: Context, img_url: str):
 
         tobeparsed = ""
 
-        channelmembernames = [re.sub(r'[^a-z]', '', member.display_name.lower()) for member in channel.members]
-
-        print(channelmembernames)
+        channelmembernames = [member.display_name.lower() for member in channel.members]
 
         for player in text:
-            print(player, player in channelmembernames)
-            if not player.lower() in channelmembernames:
-                if player != "":
-                    tobeparsed += player + ", "
+            res = [(name.find(player) > 0) for name in channelmembernames]
+            if any(res):
+                continue
+            else:
+                tobeparsed += player + ", "
         
         if text != "":
             embed=Embed(title="Hey %s" % (ctx.message.author.display_name), description="The following users from /who are not in **__your__** voice channel:\n `%s`" % (tobeparsed), color=0x2ffef7)

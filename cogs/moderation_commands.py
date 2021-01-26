@@ -146,7 +146,7 @@ class ModerationCommands(commands.Cog):
         embed.add_field(name="Exaltations Led: ",  value="%s"   % (user['exalt']),            inline=True)
         embed.add_field(name="Misc Led: ",         value="%s"   % (user['other']),            inline=True)
         embed.add_field(name="Weekly Points: ",    value="%s"   % (user['points']),           inline=True)
-        embed.add_field(name="Required Points: ",  value="%s"   % ((user['rolelevel']+1)*10), inline=True)
+        embed.add_field(name="Required Points: ",  value="%s"   % ((user['rolelevel'])*6), inline=True)
         embed.add_field(name="All Time Points: ",  value="%s"   % (user['alltime']),          inline=True)
         embed.add_field(name="Pot Ratio: ",        value="%s"   % (user['potratio']),         inline=True)
         embed.add_field(name="Failed Runs: ",      value="%s"   % (user['failed']),           inline=True)
@@ -158,6 +158,12 @@ class ModerationCommands(commands.Cog):
     @is_admin()
     async def resetstaff(self, ctx):
         await sql.reset_all()
+        await ctx.send('done')
+
+    @commands.command()
+    @is_admin()
+    async def rollover(self, ctx):
+        await sql.rollover()
         await ctx.send('done')
     
 async def on_reaction_add(reaction: Reaction, user: User):

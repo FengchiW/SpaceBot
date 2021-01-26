@@ -198,12 +198,11 @@ async def log_run(uid, t, r = 0, p = 0):
         print("Update User Fail", e)
         return "ERROR"
 
-
 async def reset_all():
     try:
         if not connection is None:
             cursor = connection.cursor()
-            sql = "UPDATE std_staff SET EXALT_LED = 0, O3_LED = 0, HALLS_LED = 0, OTHER_LED = 0, POINTS = 0, ALLTIME = 0, POT_RATIO = 0"
+            sql = "UPDATE std_staff SET EXALT_LED = 0, O3_LED = 0, HALLS_LED = 0, OTHER_LED = 0, POINTS = 0, ALLTIME = 0, POT_RATIO = 0, WARNING = 0"
             cursor.execute(sql)
             connection.commit()
             cursor.close()
@@ -214,6 +213,23 @@ async def reset_all():
         print("Update User Fail", e)
         return "ERROR"
 
+async def rollover():
+    try:
+        if not connection is None:
+            cursor = connection.cursor()
+            sql = "UPDATE std_staff SET WARNING = WARNING + 1 WHERE POINTS < ROLE_LEVEL * 6"
+            cursor.execute(sql)
+            sql = "UPDATE std_staff SET POINTS = FLOOR(SQRT(POINTS))"
+            cursor.execute(sql)
+            connection.commit()
+            cursor.close()
+        else:
+            print("Something went wrong")
+            return "Failed to add User"
+    except Error as e:
+        connection.reconnect(attempts=3, delay=0)
+        print("Update User Fail", e)
+        return "ERROR"
 
 async def drop_table(table_name):
     if connection is None:
@@ -231,7 +247,28 @@ async def drop_table(table_name):
         await log("Error encountered while attempting to drop table %s from SQL server." % table_name, LogLevel.ERROR)
         await log(e.__str__(), LogLevel.DEBUG)
 
+async def fetchall_staff():
+    if connection is None:
+        await log("Please connect to the SQL server before attempting to make queries.", LogLevel.ERROR)
+        return None
+    try:
+        cursor = connection.cursor(buffered=True)
+        query = "SELECT UID, POINTS FROM std_staff"
+        cursor.execute(query)
+        data = cursor.fetchall()
+        cursor.close()
+        if data is None:
+            return None
+        
+        return data
+    except Exception as e:
+        await log("An error occurred when attempting to fetch user with UID " + str(uid) + ".", LogLevel.ERROR)
+        connection.reconnect(attempts=3, delay=0)
+        await log(e.__str__(), LogLevel.DEBUG)
+        return None
+
 async def fetch_staff(uid):
+    connection.reconnect(attempts=3, delay=0)
     if connection is None:
         await log("Please connect to the SQL server before attempting to make queries.", LogLevel.ERROR)
         return None
@@ -264,7 +301,6 @@ async def fetch_staff(uid):
         return out
     except Exception as e:
         await log("An error occurred when attempting to fetch user with UID " + str(uid) + ".", LogLevel.ERROR)
-        connection.reconnect(attempts=3, delay=0)
         await log(e.__str__(), LogLevel.DEBUG)
         return None
 

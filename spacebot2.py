@@ -74,8 +74,26 @@ async def st():
             sl.close()
 
 async def pt():
-    pass
-
+    while True:
+        await asyncio.sleep(21600)
+        guild = get(client.guilds, id=522815906376843274)
+        timeleft = 0
+        with open("rollover.log", 'r+') as f:
+            timeleft = int(f.read())
+            if timeleft < 0:
+                timeleft = 604800
+                await sql.rollover()
+            else:
+                timeleft -= 21600
+            f.seek(0)
+            f.truncate(0)
+            f.write(timeleft)
+            f.close()
+        users = sql.fetchall_staff()
+        for usr in users:
+            uid = usr[0]
+            member = await guild.fetch_member(uid)
+        
 @client.event
 async def on_ready():
     await log(f'{client.user.name} v{VERSION} has connected to Discord!')
