@@ -140,13 +140,25 @@ class ModerationCommands(commands.Cog):
         
         user = await sql.fetch_staff(uid)
 
+        if user is None:
+            await sql.addstaff(uid, 1, 0)
+
+        user = await sql.fetch_staff(uid)
+
+        requiredpnts = 0
+
+        if user['rolelevel'] == 1:
+            requiredpnts = 40
+        else:
+            requiredpnts = 50
+
         embed=Embed    (title="Staff Stats",       description="<@!%s>" % (uid))
         embed.add_field(name="O3's led: ",         value="%s"   % (user['o3']),               inline=True)
         embed.add_field(name="Halls led: ",        value="%s"   % (user['halls']),            inline=True)
         embed.add_field(name="Exaltations Led: ",  value="%s"   % (user['exalt']),            inline=True)
         embed.add_field(name="Misc Led: ",         value="%s"   % (user['other']),            inline=True)
         embed.add_field(name="Weekly Points: ",    value="%s"   % (user['points']),           inline=True)
-        embed.add_field(name="Required Points: ",  value="%s"   % ((user['rolelevel'])*6), inline=True)
+        embed.add_field(name="Required Points: ",  value="%s"   % requiredpnts,               inline=True)
         embed.add_field(name="All Time Points: ",  value="%s"   % (user['alltime']),          inline=True)
         embed.add_field(name="Pot Ratio: ",        value="%s"   % (user['potratio']),         inline=True)
         embed.add_field(name="Failed Runs: ",      value="%s"   % (user['failed']),           inline=True)
@@ -154,6 +166,13 @@ class ModerationCommands(commands.Cog):
         embed.add_field(name="Warnings: ",         value="%s"   % (user['warn']),             inline=True)
         await ctx.send(embed=embed)
     
+    @commands.command(aliases=['rl!'])
+    @is_staff()
+    async def imanrl(self, ctx: Context):
+        uid = ctx.author.id
+        await sql.imanrl(uid)
+        await ctx.send('Bet.')
+
     @commands.command()
     @is_admin()
     async def resetstaff(self, ctx):
@@ -163,8 +182,43 @@ class ModerationCommands(commands.Cog):
     @commands.command()
     @is_admin()
     async def rollover(self, ctx):
-        await sql.rollover()
+        data = await sql.rollover()
+
+        for user in data:
+            member = ctx.message.guild.get_member(int(user[0]))
+            dm_channel = await member.create_dm()
+
+            e = Embed(title="You have Failed", description="<THIS IS A TEST DO NOT WORRY!>\nLooks like you didn't manage to make quota this week, you got %s points of %s points" % (user[1], 40))
+            await dm_channel.send(embed = e)
+
         await ctx.send('done')
+    
+    @commands.command(aliases = ['sleaderboard'])
+    async def slb(self, ctx: Context, req = None):
+        if req == None:
+            req = "Points"
+            sl = await sql.get_staff_list("POINTS")
+        elif req.lower() == "o3":
+            req = "O3's Led"
+            sl = await sql.get_staff_list("O3_LED")
+        elif req.lower() == "halls":
+            req = "Halls's Led"
+            sl = await sql.get_staff_list("HALLS_LED")
+        elif req.lower() == "other":
+            req = "Other dungeons's Led"
+            sl = await sql.get_staff_list("OTHER_LED")
+        else:
+            req = "Points"
+            sl = await sql.get_staff_list("POINTS")
+        
+
+        embed=Embed(title="Staff Leaderboard", description="Ranked by %s" % (req))
+        feildtext = ""
+        for staff in sl:
+            feildtext += "**<@!%s>**: **%s** %s! \n" % (staff[0], staff[1], req)
+
+        embed.add_field(name = "========================", value=feildtext, inline=False)
+        await ctx.send(embed=embed)
     
 async def on_reaction_add(reaction: Reaction, user: User):
     pass

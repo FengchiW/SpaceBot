@@ -202,7 +202,7 @@ async def reset_all():
     try:
         if not connection is None:
             cursor = connection.cursor()
-            sql = "UPDATE std_staff SET EXALT_LED = 0, O3_LED = 0, HALLS_LED = 0, OTHER_LED = 0, FAILED_RUNS = 0, POINTS = 0, ALLTIME = 0, POT_RATIO = 0, WARNING = 0"
+            sql = "UPDATE std_staff SET FAILED_RUNS = 0, POINTS = 0, ALLTIME = 0, POT_RATIO = 0, WARNING = 0"
             cursor.execute(sql)
             connection.commit()
             cursor.close()
@@ -213,22 +213,22 @@ async def reset_all():
         print("Update User Fail", e)
         return "ERROR"
 
-async def get_staff_list(): # Incomplete
+async def get_staff_list(req = "POINTS"): # Incomplete
     if connection is None:
         await log("Please connect to the SQL server before attempting to make queries.", LogLevel.ERROR)
         return None
     try:
         cursor = connection.cursor(buffered=True)
-        query = "SELECT UID, POINTS FROM std_staff"
+        query = "SELECT UID, " + req + " FROM std_staff ORDER BY " + req + " DESC"
         cursor.execute(query)
-        data = cursor.fetchall()
+        data = cursor.fetchmany(10)
         cursor.close()
         if data is None:
             return None
-        
+
         return data
     except Exception as e:
-        await log("An error occurred when attempting to fetch user with UID " + str(uid) + ".", LogLevel.ERROR)
+        await log("An error occurred when attempting to fetch staff list ", LogLevel.ERROR)
         connection.reconnect(attempts=3, delay=0)
         await log(e.__str__(), LogLevel.DEBUG)
         return None
@@ -238,12 +238,17 @@ async def rollover():
     try:
         if not connection is None:
             cursor = connection.cursor()
-            sql = "UPDATE std_staff SET WARNING = WARNING + 1 WHERE POINTS < ROLE_LEVEL * 6"
+            query = "SELECT UID, POINTS, ROLE_LEVEL FROM std_staff WHERE POINTS < 40"
+            cursor.execute(query)
+            data = cursor.fetchall()
+            sql = "UPDATE std_staff SET PREV_POINTS=0 WHERE POINTS < 40"
             cursor.execute(sql)
-            sql = "UPDATE std_staff SET POINTS = FLOOR(SQRT(POINTS))"
+            sql = "UPDATE std_staff SET POINTS = 0"
             cursor.execute(sql)
+
             connection.commit()
             cursor.close()
+            return data
         else:
             print("Something went wrong")
             return "Failed to add User"
@@ -283,7 +288,7 @@ async def fetchall_staff():
         
         return data
     except Exception as e:
-        await log("An error occurred when attempting to fetch user with UID " + str(uid) + ".", LogLevel.ERROR)
+        await log("An error occurred when attempting to fetch user with UID.", LogLevel.ERROR)
         connection.reconnect(attempts=3, delay=0)
         await log(e.__str__(), LogLevel.DEBUG)
         return None
@@ -312,11 +317,12 @@ async def fetch_staff(uid):
             'other': data[4],
             'rolelevel': data[5],
             'points': data[6],
-            'alltime': data[7],
-            'potratio': data[8],
-            'failed': data[9],
-            'leave': data[10],
-            'warn': data[11]
+            'prev': data[7],
+            'alltime': data[8],
+            'potratio': data[9],
+            'failed': data[10],
+            'leave': data[11],
+            'warn': data[12]
         }
         
         return out
@@ -334,10 +340,29 @@ async def addstaff(uid, level=0, pnts = 0):
         return False
     try:
         cursor = connection.cursor()
-        query = "INSERT INTO std_staff VALUES (%(user)s, 0, 0, 0, 0, %(level)s, 0, %(points)s, 0, 0, false, 0)"
+        query = "INSERT INTO std_staff VALUES (%(user)s, 0, 0, 0, 0, %(level)s, 0, %(points)s, 0, 0, 0, false, 0)"
         cursor.execute(query, {'user': uid,
                                'level': level,
                                'points': pnts})
+        connection.commit()
+        cursor.close()
+        return True
+    except Error as e:
+        await log("An error occurred while adding a user.", LogLevel.ERROR)
+        await log(e.__str__(), LogLevel.DEBUG)
+        return False
+
+async def imanrl(uid):
+    if connection is None:
+        await log("Please connect to the SQL server before attempting to insert data.", LogLevel.ERROR)
+        return False
+    if await fetch_staff(uid) is not None:
+        await log("User " + uid + " already exists in the database.", LogLevel.WARN)
+        return False
+    try:
+        cursor = connection.cursor()
+        query = "UPDATE std_staff SET ROLE_LEVEL = 1 WHERE uid = %(uid)s"
+        cursor.execute(query, {'user': uid})
         connection.commit()
         cursor.close()
         return True
