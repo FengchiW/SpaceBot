@@ -177,11 +177,11 @@ async def log_run(uid, t, r = 0, p = 0):
             cursor = connection.cursor()
             sql = ""
             if t == 0:
-                sql = "UPDATE std_staff SET HALLS_LED = HALLS_LED + %(runs)s, POINTS = POINTS + 5 * %(runs)s, ALLTIME = ALLTIME + 5 * %(runs)s, POT_RATIO = ((POT_RATIO * (HALLS_LED - 1)) +"+str(r)+")/HALLS_LED WHERE UID = %(user)s"
+                sql = "UPDATE std_staff SET HALLS_LED = HALLS_LED + %(runs)s, POINTS = POINTS + 8 * %(runs)s, ALLTIME = ALLTIME + 8 * %(runs)s, POT_RATIO = ((POT_RATIO * (HALLS_LED - 1)) +"+str(r)+")/HALLS_LED WHERE UID = %(user)s"
             elif t == 1:
-                sql = "UPDATE std_staff SET O3_LED = O3_LED + %(runs)s, POINTS = POINTS + 8 * %(runs)s, ALLTIME = ALLTIME + 8 * %(runs)s WHERE UID = %(user)s"
+                sql = "UPDATE std_staff SET O3_LED = O3_LED + %(runs)s, POINTS = POINTS + 20 * %(runs)s, ALLTIME = ALLTIME + 20 * %(runs)s WHERE UID = %(user)s"
             elif t == 2:
-                sql = "UPDATE std_staff SET EXALT_LED = EXALT_LED + %(runs)s, POINTS = POINTS + 3 * %(runs)s, ALLTIME = ALLTIME + 3 * %(runs)s WHERE UID = %(user)s"
+                sql = "UPDATE std_staff SET EXALT_LED = EXALT_LED + %(runs)s, POINTS = POINTS + 6 * %(runs)s, ALLTIME = ALLTIME + 6 * %(runs)s WHERE UID = %(user)s"
             elif t == 3:
                 sql = "UPDATE std_staff SET OTHER_LED = OTHER_LED + %(runs)s, POINTS = POINTS + 2 * %(runs)s, ALLTIME = ALLTIME + 2 * %(runs)s WHERE UID = %(user)s"
             else:
@@ -202,7 +202,7 @@ async def reset_all():
     try:
         if not connection is None:
             cursor = connection.cursor()
-            sql = "UPDATE std_staff SET FAILED_RUNS = 0, POINTS = 0, ALLTIME = 0, POT_RATIO = 0, WARNING = 0"
+            sql = "UPDATE std_staff SET EXALT_LED = 0, O3_LED = 0, HALLS_LED = 0, OTHER_LED = 0, FAILED_RUNS = 0, ROLE_LEVEL = 1, POINTS = 0, PREV_POINTS = 0, ALLTIME = 0, POT_RATIO = 0, WARNING = 0"
             cursor.execute(sql)
             connection.commit()
             cursor.close()
@@ -238,12 +238,14 @@ async def rollover():
     try:
         if not connection is None:
             cursor = connection.cursor()
-            query = "SELECT UID, POINTS, ROLE_LEVEL FROM std_staff WHERE POINTS < 40"
+            query = "SELECT UID, POINTS, ROLE_LEVEL FROM std_staff WHERE POINTS < 40 AND ROLE_LEVEL > 0 AND LEAVE = 0"
             cursor.execute(query)
             data = cursor.fetchall()
-            sql = "UPDATE std_staff SET PREV_POINTS=0 WHERE POINTS < 40"
+            sql = "UPDATE std_staff SET WARNING = 1 + WARNING WHERE POINTS < 40 AND ROLE_LEVEL > 0 AND LEAVE = 0"
             cursor.execute(sql)
-            sql = "UPDATE std_staff SET POINTS = 0"
+            sql = "UPDATE std_staff SET POINTS = POINTS / 5 - PREV_POINTS"
+            cursor.execute(sql)
+            sql = "UPDATE std_staff SET PREV_POINTS = POINTS / 5"
             cursor.execute(sql)
 
             connection.commit()

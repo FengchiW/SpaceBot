@@ -1,4 +1,4 @@
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import Intents, User, Reaction, Message, TextChannel
 from discord.ext.commands import CommandNotFound, Context, CommandInvokeError
 from emojis import decode
@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import os
+from datetime import datetime, timedelta
 
 LIVETOKEN = os.getenv("LIVETOKEN")
 DEVTOKEN = os.getenv("DEVTOKEN")
@@ -34,9 +35,9 @@ intents = Intents.all()
 client = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
 client.remove_command('help')
 
+@tasks.loop(seconds = 120)
 async def st():
     while True:
-        await asyncio.sleep(60)
         with open("suspend.log", 'r+') as sl:
             data = json.loads(sl.read())
             await log(data)
@@ -73,27 +74,38 @@ async def st():
             sl.truncate()
             sl.close()
 
+@tasks.loop(seconds = 604800)
 async def pt():
-    while True:
-        await asyncio.sleep(21600)
-        guild = get(client.guilds, id=522815906376843274)
-        timeleft = 0
-        with open("rollover.log", 'r+') as f:
-            timeleft = int(f.read())
-            if timeleft < 0:
-                timeleft = 604800
-                await sql.rollover()
-            else:
-                timeleft -= 21600
-            f.seek(0)
-            f.truncate(0)
-            f.write(timeleft)
-            f.close()
-        users = sql.fetchall_staff()
-        for usr in users:
-            uid = usr[0]
-            member = await guild.fetch_member(uid)
-        
+    data = await sql.rollover()
+    guild = get(client.guilds, id=522815906376843274)
+
+    for user in data:
+        member = guild.get_member(int(user[0]))
+        dm_channel = await member.create_dm()
+
+        e = Embed(
+            title="Inactivity Notification", 
+            description='''
+            **You failed to meet quota this week.**
+            Your weekly quota is: **%s** points, but you only had **%s** points.
+            If this happens twice in a row without explaining your reasoning to upper staff, you will be demoted for inactivity.
+            ''' % (40, user[1]), 
+            color=0xdb021c)
+        e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
+        await dm_channel.send(embed = e)
+    print("Rolling over")
+
+@pt.before_loop
+async def bpt():
+    hour = 23
+    minute = 55
+    await client.wait_until_ready()
+    now = datetime.now()
+    future = datetime(now.year, now.month, now.day, hour, minute)
+    if now.hour >= hour and now.minute > minute:
+        future += timedelta(days=1)
+    await asyncio.sleep((future-now).seconds)
+
 @client.event
 async def on_ready():
     await log(f'{client.user.name} v{VERSION} has connected to Discord!')
@@ -101,7 +113,8 @@ async def on_ready():
     await sql.connect()
     # Loads config for guilds the bot is currently a member of.
     await log("Loading config for connected guilds.")
-    client.loop.create_task(st())
+    st.start()
+    pt.start()
     for guild in client.guilds:
         cfg = await server_config.get_config(guild)
         if cfg is not None:
