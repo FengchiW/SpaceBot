@@ -37,45 +37,44 @@ client.remove_command('help')
 
 @tasks.loop(seconds = 120)
 async def st():
-    while True:
-        with open("suspend.log", 'r+') as sl:
-            data = json.loads(sl.read())
-            await log(data)
-            guild = get(client.guilds, id=522815906376843274)
-            suspended_role = get(guild.roles, id=522847611649130506)
-            mr = get(guild.roles, id=522817975091462147)
-            dellist = []
-            for uid in data:
-                try:
-                    member = await guild.fetch_member(uid)
-                    if data[uid]['dur'] <= 0:
-                        print("unsupending user")
-                        if member is None:
-                            print("Error Null Member")
-                        else:
-                            try:
-                                await member.remove_roles(suspended_role)
-                                if suspended_role is not None:
-                                    await member.add_roles(mr)
-                                    logchannel = get(guild.channels, id=761788719685435404)
-                                    suschannel = get(guild.channels, id=763644055536009216)
-                                    embed=Embed(title="User Unsuspended", description="**%s**, He has served his time \n Unsuspender: **SpaceBot**" % (member.display_name))
-
-                                    await suschannel.send(embed=embed)
-                                    await logchannel.send(embed=embed)
-                            except Exception as e:
-                                print(e)
-                        dellist.append(uid)
+    with open("suspend.log", 'r+') as sl:
+        data = json.loads(sl.read())
+        await log(data)
+        guild = get(client.guilds, id=522815906376843274)
+        suspended_role = get(guild.roles, id=522847611649130506)
+        mr = get(guild.roles, id=522817975091462147)
+        dellist = []
+        for uid in data:
+            try:
+                member = await guild.fetch_member(uid)
+                if data[uid]['dur'] <= 0:
+                    print("unsupending user")
+                    if member is None:
+                        print("Error Null Member")
                     else:
-                        data[uid]['dur'] = data[uid]['dur'] - 1
-                except Exception:
-                    print("failed")
-            for uid in dellist:
-                data.pop(uid, None)
-            sl.seek(0)
-            json.dump(data, sl)
-            sl.truncate()
-            sl.close()
+                        try:
+                            await member.remove_roles(suspended_role)
+                            if suspended_role is not None:
+                                await member.add_roles(mr)
+                                logchannel = get(guild.channels, id=761788719685435404)
+                                suschannel = get(guild.channels, id=763644055536009216)
+                                embed=Embed(title="User Unsuspended", description="**%s**, He has served his time \n Unsuspender: **SpaceBot**" % (member.display_name))
+
+                                await suschannel.send(embed=embed)
+                                await logchannel.send(embed=embed)
+                        except Exception as e:
+                            print(e)
+                    dellist.append(uid)
+                else:
+                    data[uid]['dur'] = data[uid]['dur'] - 1
+            except Exception:
+                print("failed")
+        for uid in dellist:
+            data.pop(uid, None)
+        sl.seek(0)
+        json.dump(data, sl)
+        sl.truncate()
+        sl.close()
 
 @tasks.loop(seconds = 604800)
 async def pt():
