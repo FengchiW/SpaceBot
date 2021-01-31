@@ -238,10 +238,10 @@ async def rollover():
     try:
         if not connection is None:
             cursor = connection.cursor()
-            query = "SELECT UID, POINTS, ROLE_LEVEL FROM std_staff WHERE POINTS < 40 AND ROLE_LEVEL > 0 AND LEAVE = 0"
+            query = "SELECT UID, POINTS, ROLE_LEVEL FROM std_staff WHERE POINTS < 40 AND ROLE_LEVEL > 0"
             cursor.execute(query)
             data = cursor.fetchall()
-            sql = "UPDATE std_staff SET WARNING = 1 + WARNING WHERE POINTS < 40 AND ROLE_LEVEL > 0 AND LEAVE = 0"
+            sql = "UPDATE std_staff SET WARNING = 1 + WARNING WHERE POINTS < 40 AND ROLE_LEVEL > 0"
             cursor.execute(sql)
             sql = "UPDATE std_staff SET POINTS = POINTS / 5 - PREV_POINTS"
             cursor.execute(sql)
