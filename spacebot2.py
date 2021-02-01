@@ -118,7 +118,7 @@ async def bpt():
     now = datetime.now()
     future = datetime(now.year, now.month, now.day, hour, minute)
     if now.hour >= hour and now.minute > minute:
-        future += timedelta(days=1)
+        future += timedelta(days=7)
 
     print("waiting till %s, current at %s" %(future,now))
     await asyncio.sleep((future-now).seconds)
