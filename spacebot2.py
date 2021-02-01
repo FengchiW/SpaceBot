@@ -81,11 +81,10 @@ async def pt():
     data = await sql.rollover()
     guild = get(client.guilds, id=522815906376843274)
     logchannel = get(guild.channels, id=761788719685435404)
-    staffinto  = get(guild.channels, id=805617569054326795)
+    staffinfo  = get(guild.channels, id=805617569054326795)
     for user in data:
         member = guild.get_member(int(user[0]))
         dm_channel = await member.create_dm()
-        staffinfo = a
 
         e = Embed(
             title="Inactivity Notification", 
@@ -109,7 +108,7 @@ async def pt():
         e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
         await logchannel.send(embed = e)
         await staffinfo.send(embed = e)
-    print("Rolling over")
+    await log("Rolling over")
 
 @pt.before_loop
 async def bpt():
