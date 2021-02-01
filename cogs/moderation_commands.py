@@ -131,6 +131,19 @@ class ModerationCommands(commands.Cog):
     async def register(self, ctx: Context, *args):
         await staff_verify.rs(ctx, args)
     
+    @commands.command(aliases=['noquota'])
+    @commands.guild_only()
+    @is_staff()
+    async def idontlead(self, ctx: Context, name = None):
+        staffinfo  = get(ctx.message.guild.channels, id=805617569054326795)
+        uid = ctx.author.id
+        if not name is None:
+            uid = int(re.sub('[<!@>]', '', name))
+        await sql.idontlead( uid )
+        await staffinfo.send('```Warning, %s id: %s says that he is should not have a quota.```' % (ctx.message.author.display_name, ctx.message.author.id))
+        await ctx.send("Lazy Boi.")
+        
+
     @commands.command(aliases=['ss'])
     @is_staff()
     async def staffstats(self, ctx: Context, name=None):
@@ -150,6 +163,8 @@ class ModerationCommands(commands.Cog):
 
         if user['rolelevel'] == 1:
             requiredpnts = 40
+        elif user['rolelevel'] == 0:
+            requiredpnts = 0
         else:
             requiredpnts = 50
 
@@ -178,7 +193,7 @@ class ModerationCommands(commands.Cog):
     @is_admin()
     async def resetstaff(self, ctx):
         await sql.reset_all()
-        await ctx.send('done')
+        await ctx.send('Okay, lazy boi')
 
     @commands.command()
     @is_admin()

@@ -213,6 +213,21 @@ async def reset_all():
         print("Update User Fail", e)
         return "ERROR"
 
+async def idontlead(uid):
+    try:
+        if not connection is None:
+            cursor = connection.cursor()
+            sql = "UPDATE std_staff SET ROLE_LEVEL = 0, POT_RATIO = 0, WARNING = 0 WHERE UID = %(uid)s"
+            cursor.execute(sql, {"uid": uid})
+            connection.commit()
+            cursor.close()
+        else:
+            print("Something went wrong")
+            return "Failed to add User"
+    except Error as e:
+        print("Update User Fail", e)
+        return "ERROR"
+
 async def get_staff_list(req = "POINTS"): # Incomplete
     if connection is None:
         await log("Please connect to the SQL server before attempting to make queries.", LogLevel.ERROR)
