@@ -186,7 +186,7 @@ class ModerationCommands(commands.Cog):
     @is_staff()
     async def imanrl(self, ctx: Context):
         uid = ctx.author.id
-        await sql.imanrl(uid)
+        await sql.imanrl(int(uid))
         await ctx.send('Bet.')
 
     @commands.command()

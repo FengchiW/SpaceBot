@@ -274,6 +274,23 @@ async def rollover():
         print("Update User Fail", e)
         return "ERROR"
 
+async def dont_meet_quota():
+    try:
+        if not connection is None:
+            cursor = connection.cursor()
+            query = "SELECT UID, POINTS, ROLE_LEVEL FROM std_staff WHERE POINTS < 40 AND ROLE_LEVEL > 0"
+            cursor.execute(query)
+            data = cursor.fetchall()
+            cursor.close()
+            return data
+        else:
+            print("Something went wrong")
+            return "Failed to add User"
+    except Error as e:
+        connection.reconnect(attempts=3, delay=0)
+        print("Update User Fail", e)
+        return "ERROR"
+
 async def drop_table(table_name):
     if connection is None:
         await log("Please connect to the SQL server before attempting to drop the server config table.", LogLevel.ERROR)
