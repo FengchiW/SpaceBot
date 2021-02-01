@@ -53,7 +53,7 @@ async def text_from_image(ctx: Context, img_url: str):
         channelmembernames = [member.display_name.lower() for member in channel.members]
 
         for player in text:
-            res = [(name.find(player) > 0) for name in channelmembernames]
+            res = [(name.find(player) >= 0) for name in channelmembernames]
             if any(res):
                 continue
             else:
