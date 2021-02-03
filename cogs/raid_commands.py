@@ -30,12 +30,12 @@ class RaidCommands(commands.Cog):
 
         await parse.text_from_image(ctx, img_url)
 
-    @commands.command(aliases=["tafk"])
+    @commands.command()
     @commands.guild_only()
     @is_rl_or_higher()
-    async def tafk(self, ctx: Context, dung = None, location = None, *args):
+    async def fafk(self, ctx: Context, dung = None, location = None, *args):
         peram = args
-        
+
 
     @commands.command(aliases=["e", "log", "l"])
     @commands.guild_only()
