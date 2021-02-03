@@ -5,6 +5,7 @@ from cogs.user import headcount
 from util.permissions import is_rl_or_higher, is_staff
 from persistent import sql, server_config, sqlconfig
 from cogs.moderation import parse
+from cogs.raid import afkcheck
 from discord.utils import get
 import re
 from util import constants
@@ -28,6 +29,13 @@ class RaidCommands(commands.Cog):
             img_url = attachments[0].url
 
         await parse.text_from_image(ctx, img_url)
+
+    @commands.command(aliases=["tafk"])
+    @commands.guild_only()
+    @is_rl_or_higher()
+    async def tafk(self, ctx: Context, dung = None, location = None, *args):
+        peram = args
+        
 
     @commands.command(aliases=["e", "log", "l"])
     @commands.guild_only()

@@ -76,39 +76,40 @@ async def st():
         sl.close()
         print("Suspend Thread")
 
-@tasks.loop(seconds = 604800)
+@tasks.loop(seconds = 86400)
 async def pt():
-    data = await sql.rollover()
-    guild = get(client.guilds, id=522815906376843274)
-    logchannel = get(guild.channels, id=761788719685435404)
-    staffinfo  = get(guild.channels, id=805617569054326795)
-    for user in data:
-        member = guild.get_member(int(user[0]))
-        dm_channel = await member.create_dm()
+    if datetime.now().weekday == 0:
+        data = await sql.rollover()
+        guild = get(client.guilds, id=522815906376843274)
+        logchannel = get(guild.channels, id=761788719685435404)
+        staffinfo  = get(guild.channels, id=805617569054326795)
+        for user in data:
+            member = guild.get_member(int(user[0]))
+            dm_channel = await member.create_dm()
 
-        e = Embed(
-            title="Inactivity Notification", 
-            description='''
-            **You failed to meet quota this week.**
-            Your weekly quota is: **%s** points, but you only had **%s** points.
-            If this happens twice in a row without explaining your reasoning to upper staff, you will be demoted for inactivity.
-            ''' % (40, user[1]), 
-            color=0xdb021c)
-        e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
+            e = Embed(
+                title="Inactivity Notification", 
+                description='''
+                **You failed to meet quota this week.**
+                Your weekly quota is: **%s** points, but you only had **%s** points.
+                If this happens twice in a row without explaining your reasoning to upper staff, you will be demoted for inactivity.
+                ''' % (40, user[1]), 
+                color=0xdb021c)
+            e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
 
-        await dm_channel.send(embed = e)
+            await dm_channel.send(embed = e)
 
-        e = Embed(
-            title="Inactivity Alert", 
-            description='''
-            **%s did not meet quota.**
-            Thier weekly quota was: **%s** points, but tehy only had **%s** points.
-            ''' % (member.display_name,40, user[1]), 
-            color=0xdb021c)
-        e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
-        await logchannel.send(embed = e)
-        await staffinfo.send(embed = e)
-    await log("Rolling over")
+            e = Embed(
+                title="Inactivity Alert", 
+                description='''
+                **%s did not meet quota.**
+                Thier weekly quota was: **%s** points, but tehy only had **%s** points.
+                ''' % (member.display_name,40, user[1]), 
+                color=0xdb021c)
+            e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
+            await logchannel.send(embed = e)
+            await staffinfo.send(embed = e)
+        await log("Rolling over")
 
 @pt.before_loop
 async def bpt():
