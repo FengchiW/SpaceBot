@@ -97,7 +97,7 @@ async def pt():
                 color=0xdb021c)
             e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
 
-            await dm_channel.send(embed = e)
+            # await dm_channel.send(embed = e)
 
             e = Embed(
                 title="Inactivity Alert", 
@@ -110,19 +110,6 @@ async def pt():
             await logchannel.send(embed = e)
             await staffinfo.send(embed = e)
         await log("Rolling over")
-
-@pt.before_loop
-async def bpt():
-    hour = 23
-    minute = 55
-    await client.wait_until_ready()
-    now = datetime.now()
-    future = datetime(now.year, now.month, now.day, hour, minute)
-    if now.hour >= hour and now.minute > minute:
-        future += timedelta(days=7)
-
-    print("waiting till %s, current at %s" %(future,now))
-    await asyncio.sleep((future-now).seconds)
 
 @client.event
 async def on_ready():
