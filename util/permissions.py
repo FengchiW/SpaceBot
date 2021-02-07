@@ -19,7 +19,7 @@ def is_rl_or_higher():
 
 def is_security():
     def predicate(ctx):
-        return any(role.name in ["Admin", "Owner", "Moderators", "Security", "Officer"] for role in ctx.author.roles)
+        return any(role.name in ["Admin", "Owner", "Moderator", "Security", "Officer"] for role in ctx.author.roles)
     return commands.check(predicate)
 
 def is_admin():
