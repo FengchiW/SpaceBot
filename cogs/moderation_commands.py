@@ -4,7 +4,7 @@ from discord.ext.commands import Context
 from persistent import sql, server_config, sqlconfig
 from util import constants
 from cogs.moderation import config, manual_verify, staff_verify
-from util.permissions import is_rl_or_higher, is_staff, is_admin
+from util.permissions import is_rl_or_higher, is_staff, is_admin, is_security
 import simplejson as json
 from discord import Embed
 from discord.utils import get
@@ -195,6 +195,17 @@ class ModerationCommands(commands.Cog):
         await sql.reset_all()
         await ctx.send('Okay, lazy boi')
 
+    @commands.command()
+    @is_security()
+    async def purge(self, ctx, amt = 1):
+        if(amt > 20):
+            amt = 1
+            ctx.send("you can't purge more than 20 msg")
+        staffinfo  = get(ctx.message.guild.channels, id=805617569054326795)
+        await ctx.channel.purge(limit=amt)
+        await ctx.message.delete()
+        await staffinfo.send('Cleared by <@{.author.id}>'.format(ctx))
+    
     @commands.command()
     @is_admin()
     async def rollover(self, ctx):
