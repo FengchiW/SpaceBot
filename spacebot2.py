@@ -78,6 +78,7 @@ async def st():
 
 @tasks.loop(seconds = 86400)
 async def pt():
+    logging.log("rollover thread", datetime.now().weekday)
     if datetime.now().weekday == 0:
         data = await sql.rollover()
         guild = get(client.guilds, id=522815906376843274)
