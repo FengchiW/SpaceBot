@@ -95,10 +95,9 @@ async def pt():
         await msg.add_reaction("❌")
 
         def check(obj, user = 0):
-            print(obj.me, obj.message != msg)
-            if obj.me:
-                return False
             if obj.message != msg:
+                return False
+            elif user.bot:
                 return False
             else:
                 return True
@@ -108,25 +107,11 @@ async def pt():
 
         await msg.clear_reactions()
 
-        if contract[0].emoji == "✔":
+        if contract[0].emoji == "1️⃣":
             data = await sql.rollover()
             
             for user in data:
                 member = guild.get_member(int(user[0]))
-                dm_channel = await member.create_dm()
-
-                e = Embed(
-                    title="Inactivity Notification", 
-                    description='''
-                    **You failed to meet quota this week.**
-                    Your weekly quota is: **%s** points, but you only had **%s** points.
-                    If this happens twice in a row without explaining your reasoning to upper staff, you will be demoted for inactivity.
-                    ''' % (40, user[1]), 
-                    color=0xdb021c)
-                e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
-
-                # await dm_channel.send(embed = e)
-
                 e = Embed(
                     title="Inactivity Alert", 
                     description='''

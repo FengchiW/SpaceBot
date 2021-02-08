@@ -140,7 +140,8 @@ class ModerationCommands(commands.Cog):
         if not name is None:
             uid = int(re.sub('[<!@>]', '', name))
         await sql.idontlead( uid )
-        msg = await staffinfo.send('```Warning, <@!%s> id: <@!%s> says that he is should not have a quota.```' % (ctx.message.author.id, uid))
+        embed=Embed(title="No Quota", description="Warning, <@!%s> id: <@!%s> says that he is should not have a quota."% (ctx.message.author.id, uid))
+        msg = await staffinfo.send(embed=embed)
         await ctx.message.add_reaction("✔")
 
     @commands.command(aliases=['ss'])
