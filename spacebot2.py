@@ -78,46 +78,75 @@ async def st():
 
 @tasks.loop(seconds = 86400)
 async def pt():
+    def check(obj, user = 0):
+            return True
     await log("rollover thread %s" %  (datetime.now().weekday()))
     if datetime.now().weekday() == 0:
-        data = await sql.rollover()
         guild = get(client.guilds, id=522815906376843274)
         logchannel = get(guild.channels, id=761788719685435404)
         staffinfo  = get(guild.channels, id=805617569054326795)
-        for user in data:
-            member = guild.get_member(int(user[0]))
-            dm_channel = await member.create_dm()
+        
+        embed = Embed(title="Monday Quota Bot", description="=========================")
+        
+        embed.add_field(name = "%s: Quota has come are you ready to parse staff?" % (datetime.now()),
+        value = "This will start the rollover, (STAFF WILL NOT BE AUTO DM'ED)",
+        inline=False)
+        msg = await staffinfo.send(embed=embed, content="@here")
 
-            e = Embed(
-                title="Inactivity Notification", 
-                description='''
-                **You failed to meet quota this week.**
-                Your weekly quota is: **%s** points, but you only had **%s** points.
-                If this happens twice in a row without explaining your reasoning to upper staff, you will be demoted for inactivity.
-                ''' % (40, user[1]), 
-                color=0xdb021c)
-            e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
+        await msg.add_reaction("✔")
+        await msg.add_reaction("❌")
 
-            # await dm_channel.send(embed = e)
+        contract = await self.bot.wait_for('reaction_add', check=check)
 
-            e = Embed(
-                title="Inactivity Alert", 
-                description='''
-                **%s did not meet quota.**
-                Their weekly quota was: **%s** points, but they only had **%s** points.\n
-                Their roles are: %s \n 
-                If they shouldn't have a quota copy the following command \n
-                `.noquota %s`
-                ''' % (member.display_name,
-                40,
-                user[1], 
-                ", ".join([(role.name) for role in member.roles]),
-                 member.id), 
-                color=0xdb021c)
-            e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
-            await logchannel.send(embed = e)
-            await staffinfo.send(embed = e)
-        await log("Rolling over")
+        await msg.clear_reactions()
+
+        if contract[0].emoji == "✔":
+            data = await sql.rollover()
+            
+            for user in data:
+                member = guild.get_member(int(user[0]))
+                dm_channel = await member.create_dm()
+
+                e = Embed(
+                    title="Inactivity Notification", 
+                    description='''
+                    **You failed to meet quota this week.**
+                    Your weekly quota is: **%s** points, but you only had **%s** points.
+                    If this happens twice in a row without explaining your reasoning to upper staff, you will be demoted for inactivity.
+                    ''' % (40, user[1]), 
+                    color=0xdb021c)
+                e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
+
+                # await dm_channel.send(embed = e)
+
+                e = Embed(
+                    title="Inactivity Alert", 
+                    description='''
+                    **%s did not meet quota.**
+                    Their weekly quota was: **%s** points, but they only had **%s** points.\n
+                    Their roles are: %s \n 
+                    If they shouldn't have a quota copy the following command \n
+                    `.noquota %s`
+                    ''' % (member.display_name,
+                    40,
+                    user[1], 
+                    ", ".join([(role.name) for role in member.roles]),
+                    member.id), 
+                    color=0xdb021c)
+                e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
+                await logchannel.send(embed = e)
+                await staffinfo.send(embed = e)
+            await log("Rolling over")
+        else:
+            embed = Embed(title="Monday Quota Bot", description="=========================")
+        
+            embed.add_field(name = "%s: %s?" % (datetime.now(), contract[1].display_name),
+            value = "You have canceled rollover this week, dm @Arceye if this was a mistake",
+            inline=False)
+            msg.edit(embed=embed)
+
+        
+        
 
 @client.event
 async def on_ready():

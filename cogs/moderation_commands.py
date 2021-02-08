@@ -135,14 +135,12 @@ class ModerationCommands(commands.Cog):
     @commands.guild_only()
     @is_staff()
     async def idontlead(self, ctx: Context, name = None):
-        staffinfo  = get(ctx.message.guild.channels, id=805617569054326795)
+        staffinfo  = get(ctx.message.guild.channels, id=761788719685435404)
         uid = ctx.author.id
         if not name is None:
             uid = int(re.sub('[<!@>]', '', name))
         await sql.idontlead( uid )
         await staffinfo.send('```Warning, %s id: %s says that he is should not have a quota.```' % (ctx.message.author.display_name, ctx.message.author.id))
-        await ctx.send("Lazy Boi.")
-        
 
     @commands.command(aliases=['ss'])
     @is_staff()
