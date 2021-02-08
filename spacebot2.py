@@ -78,8 +78,6 @@ async def st():
 
 @tasks.loop(seconds = 86400)
 async def pt():
-    def check(obj, user = 0):
-            return True
     await log("rollover thread %s" %  (datetime.now().weekday()))
     if datetime.now().weekday() == 0:
         guild = get(client.guilds, id=522815906376843274)
@@ -95,6 +93,15 @@ async def pt():
 
         await msg.add_reaction("✔")
         await msg.add_reaction("❌")
+
+        def check(obj, user = 0):
+            if obj.me:
+                return False
+            if obj.message != msg:
+                return False
+            else:
+                return True
+
 
         contract = await client.wait_for('reaction_add', check=check)
 
@@ -143,7 +150,7 @@ async def pt():
             embed.add_field(name = "%s: %s?" % (datetime.now(), contract[1].display_name),
             value = "You have canceled rollover this week, dm @Arceye if this was a mistake",
             inline=False)
-            msg.edit(embed=embed)
+            await msg.edit(embed=embed)
 
         
         
