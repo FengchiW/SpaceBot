@@ -104,8 +104,9 @@ async def pt():
                 title="Inactivity Alert", 
                 description='''
                 **%s did not meet quota.**
-                Thier weekly quota was: **%s** points, but tehy only had **%s** points.
-                ''' % (member.display_name,40, user[1]), 
+                Their weekly quota was: **%s** points, but tehy only had **%s** points.\n
+                Their roles are: %s
+                ''' % (member.display_name,40, user[1], ", ".join([(role.name for role in member.roles)])), 
                 color=0xdb021c)
             e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
             await logchannel.send(embed = e)
