@@ -95,6 +95,7 @@ async def pt():
         await msg.add_reaction("❌")
 
         def check(obj, user = 0):
+            print(obj.me, obj.message != msg)
             if obj.me:
                 return False
             if obj.message != msg:
