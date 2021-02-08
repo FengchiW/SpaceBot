@@ -141,7 +141,7 @@ class ModerationCommands(commands.Cog):
             uid = int(re.sub('[<!@>]', '', name))
         await sql.idontlead( uid )
         msg = await staffinfo.send('```Warning, <@!%s> id: <@!%s> says that he is should not have a quota.```' % (ctx.message.author.id, uid))
-        await msg.add_reaction("✔")
+        await ctx.message.add_reaction("✔")
 
     @commands.command(aliases=['ss'])
     @is_staff()

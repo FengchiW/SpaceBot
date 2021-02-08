@@ -91,12 +91,12 @@ async def pt():
         embed.add_field(name = "%s: Quota has come are you ready to parse staff?" % (datetime.now()),
         value = "This will start the rollover, (STAFF WILL NOT BE AUTO DM'ED)",
         inline=False)
-        msg = await staffinfo.send(embed=embed, content="@here")
+        msg = await staffinfo.send(embed=embed)
 
         await msg.add_reaction("✔")
         await msg.add_reaction("❌")
 
-        contract = await self.bot.wait_for('reaction_add', check=check)
+        contract = await client.wait_for('reaction_add', check=check)
 
         await msg.clear_reactions()
 
