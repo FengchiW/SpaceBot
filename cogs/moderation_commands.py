@@ -226,10 +226,10 @@ class ModerationCommands(commands.Cog):
             req = "Halls's Led"
             sl = await sql.get_staff_list("HALLS_LED")
         elif req.lower() == "other":
-            req = "All time points"
+            req = "Other dungeons's Led"
             sl = await sql.get_staff_list("OTHER_LED")
         elif req.lower() == "alltime":
-            req = "Other dungeons's Led"
+            req = "All time points"
             sl = await sql.get_staff_list("ALLTIME")
         else:
             req = "Points"
