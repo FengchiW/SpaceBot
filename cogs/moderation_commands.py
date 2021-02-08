@@ -212,19 +212,6 @@ class ModerationCommands(commands.Cog):
 
         for user in data:
             member = ctx.message.guild.get_member(int(user[0]))
-            dm_channel = await member.create_dm()
-
-            e = Embed(
-                title="Inactivity Notification", 
-                description='''
-                **You failed to meet quota this week.**
-                Your weekly quota is: **%s** points, but you only had **%s** points.
-                If this happens twice in a row without explaining your reasoning to upper staff, you will be demoted for inactivity.
-                ''' % (40, user[1]), 
-                color=0xdb021c)
-            e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
-            await dm_channel.send(embed = e)
-
         await ctx.send('done')
     
     @commands.command(aliases = ['sleaderboard'])
