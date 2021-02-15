@@ -40,7 +40,7 @@ async def st():
     with open("suspend.log", 'r+') as sl:
         data = json.loads(sl.read())
         guild = get(client.guilds, id=522815906376843274)
-        suspended_role = get(guild.roles, id=522847611649130506)
+        suspended_role = guild = get(guild.role, id=776320653581877278)
         mr = get(guild.roles, id=522817975091462147)
         dellist = []
         for uid in data:
@@ -107,7 +107,7 @@ async def pt():
 
         await msg.clear_reactions()
 
-        if contract[0].emoji == "1️⃣":
+        if contract[0].emoji == "✔":
             data = await sql.rollover()
             
             for user in data:
