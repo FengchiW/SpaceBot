@@ -111,44 +111,47 @@ async def pt():
             data = await sql.rollover()
             
             for user in data:
-                member = guild.get_member(int(user[0]))
-                e = Embed(
-                    title="Inactivity Alert", 
-                    description='''
-                    **%s did not meet quota.**
-                    Their weekly quota was: **%s** points, but they only had **%s** points.\n
-                    Their roles are: %s \n 
-                    If they shouldn't have a quota copy the following command \n
-                    `.noquota %s` \n
-                    When you are done with this card react with ❌
-                    ''' % (member.display_name,
-                    40,
-                    user[1], 
-                    ", ".join([(role.name) for role in member.roles]),
-                    member.id), 
-                    color=0xdb021c)
-                e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
-                await logchannel.send(embed = e)
-                k = await staffinfo.send(embed = e)
+                try:
+                    member = guild.get_member(int(user[0]))
+                    e = Embed(
+                        title="Inactivity Alert", 
+                        description='''
+                        **%s did not meet quota.**
+                        Their weekly quota was: **%s** points, but they only had **%s** points.\n
+                        Their roles are: %s \n 
+                        If they shouldn't have a quota copy the following command \n
+                        `.noquota %s` \n
+                        When you are done with this card react with ❌
+                        ''' % (member.display_name,
+                        40,
+                        user[1], 
+                        ", ".join([(role.name) for role in member.roles]),
+                        member.id), 
+                        color=0xdb021c)
+                    e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
+                    await logchannel.send(embed = e)
+                    k = await staffinfo.send(embed = e)
 
-                def kcheck(obj, user = 0):
-                    if obj.message != k:
-                        return False
-                    elif user.bot:
-                        return False
-                    else:
-                        return True
-                await msg.add_reaction("❌")
+                    def kcheck(obj, user = 0):
+                        if obj.message != k:
+                            return False
+                        elif user.bot:
+                            return False
+                        else:
+                            return True
+                    await msg.add_reaction("❌")
 
-                contract = await client.wait_for('reaction_add', check=kcheck)
+                    contract = await client.wait_for('reaction_add', check=kcheck)
 
-                await k.delete()
+                    await k.delete()
 
-                e = Embed(
-                    title="Quota Notice", 
-                    description='<@!%s> has completed quota check on <@!%s>',
-                    color=0xdb021c)
-                await logchannel.send( embed = e)
+                    e = Embed(
+                        title="Quota Notice", 
+                        description='<@!%s> has completed quota check on <@!%s>',
+                        color=0xdb021c)
+                    await logchannel.send( embed = e)
+                except Exception:
+                    print("Opps something went wrong")
                 
             await log("Rolling over")
         else:
