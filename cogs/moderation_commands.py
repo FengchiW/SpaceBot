@@ -201,7 +201,7 @@ class ModerationCommands(commands.Cog):
         if(amt > 20):
             amt = 1
             ctx.send("you can't purge more than 20 msg")
-        staffinfo  = get(ctx.message.guild.channels, id=805617569054326795)
+        staffinfo  = get(ctx.message.guild.channels, id=761788719685435404)
         await ctx.channel.purge(limit=amt)
         await staffinfo.send('`<@!%s> Cleared %s message(s) from %s`' % (ctx.message.author.id, amt, ctx.message.channel.name))
     

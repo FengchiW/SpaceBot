@@ -119,7 +119,8 @@ async def pt():
                     Their weekly quota was: **%s** points, but they only had **%s** points.\n
                     Their roles are: %s \n 
                     If they shouldn't have a quota copy the following command \n
-                    `.noquota %s`
+                    `.noquota %s` \n
+                    When you are done with this card react with ❌
                     ''' % (member.display_name,
                     40,
                     user[1], 
@@ -128,7 +129,27 @@ async def pt():
                     color=0xdb021c)
                 e.set_footer(text="Space Travel Dungeons", icon_url = "https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
                 await logchannel.send(embed = e)
-                await staffinfo.send(embed = e)
+                k = await staffinfo.send(embed = e)
+
+                def kcheck(obj, user = 0):
+                    if obj.message != k:
+                        return False
+                    elif user.bot:
+                        return False
+                    else:
+                        return True
+                await msg.add_reaction("❌")
+
+                contract = await client.wait_for('reaction_add', check=kcheck)
+
+                await k.delete()
+
+                e = Embed(
+                    title="Quota Notice", 
+                    description='<@!%s> has completed quota check on <@!%s>',
+                    color=0xdb021c)
+                await logchannel.send( embed = e)
+                
             await log("Rolling over")
         else:
             embed = Embed(title="Monday Quota Bot", description="=========================")
