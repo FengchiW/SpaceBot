@@ -231,6 +231,9 @@ class ModerationCommands(commands.Cog):
         elif req.lower() == "alltime":
             req = "All time points"
             sl = await sql.get_staff_list("ALLTIME")
+        elif req.lower() == "pot":
+            req = "Pot Ratio"
+            sl = await sql.get_staff_list("POT_RATIO", "ASC")
         else:
             req = "Points"
             sl = await sql.get_staff_list("POINTS")

@@ -228,13 +228,13 @@ async def idontlead(uid):
         print("Update User Fail", e)
         return "ERROR"
 
-async def get_staff_list(req = "POINTS"): # Incomplete
+async def get_staff_list(req = "POINTS", asc = "DESC"): # Incomplete
     if connection is None:
         await log("Please connect to the SQL server before attempting to make queries.", LogLevel.ERROR)
         return None
     try:
         cursor = connection.cursor(buffered=True)
-        query = "SELECT UID, " + req + " FROM std_staff ORDER BY " + req + " DESC"
+        query = "SELECT UID, " + req + " FROM std_staff ORDER BY " + req + " " + asc
         cursor.execute(query)
         data = cursor.fetchmany(10)
         cursor.close()

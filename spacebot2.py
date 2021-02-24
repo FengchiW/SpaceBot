@@ -40,7 +40,7 @@ async def st():
     with open("suspend.log", 'r+') as sl:
         data = json.loads(sl.read())
         guild = get(client.guilds, id=522815906376843274)
-        suspended_role = get(guild.role, id=776320653581877278)
+        suspended_role = get(guild.roles, id=776320653581877278)
         mr = get(guild.roles, id=522817975091462147)
         dellist = []
         for uid in data:
@@ -62,19 +62,19 @@ async def st():
                                 await suschannel.send(embed=embed)
                                 await logchannel.send(embed=embed)
                         except Exception as e:
-                            print(e)
+                            await log("An unexpected Error has occured during unsuspend while removing user roles.")
                     dellist.append(uid)
                 else:
                     data[uid]['dur'] = data[uid]['dur'] - 2
             except Exception:
-                print("failed")
+                await log("An unexpected Error has occured during unsuspend tread.")
         for uid in dellist:
             data.pop(uid, None)
         sl.seek(0)
         json.dump(data, sl)
         sl.truncate()
         sl.close()
-        print("Suspend Thread")
+        
 
 @tasks.loop(seconds = 86400)
 async def pt():
@@ -208,24 +208,6 @@ async def on_command_error(ctx: Context, error):
 async def on_member_join(member):
     pass
 
-
-'''
-@client.event
-async def on_reaction_add(reaction: Reaction, user: User):
-    if reaction.message.author.id != client.user.id:
-        return
-    if decode(reaction.emoji) == ":egg:":
-        print("egg detected")
-    for cog in client.extensions.values():
-        listener_method = getattr(cog, "on_reaction_add")
-        if listener_method is not None:
-            try:
-                await listener_method(reaction, user)
-            except Exception as e:
-                # exception should only occur if there's no such method -
-                # ignore it, that's fine
-                continue
-'''
 
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
