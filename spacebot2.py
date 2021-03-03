@@ -75,21 +75,21 @@ async def st():
         sl.truncate()
         sl.close()
         
-
+'''
 @tasks.loop(seconds = 86400)
 async def pt():
     await log("rollover thread %s" %  (datetime.now().weekday()))
     if datetime.now().weekday() == 0:
         guild = get(client.guilds, id=522815906376843274)
         logchannel = get(guild.channels, id=761788719685435404)
-        staffinfo  = get(guild.channels, id=805617569054326795)
+        staffinfo  = get(guild.channels, id=816025151178670090)
         
         embed = Embed(title="Monday Quota Bot", description="=========================")
         
         embed.add_field(name = "%s: Quota has come are you ready to parse staff?" % (datetime.now()),
         value = "This will start the rollover, (STAFF WILL NOT BE AUTO DM'ED)",
         inline=False)
-        msg = await staffinfo.send(embed=embed)
+        msg = await staffinfo.send(content = "<@&761211992438472744> <@&522816654091223051>", embed=embed)
 
         await msg.add_reaction("✔")
         await msg.add_reaction("❌")
@@ -115,14 +115,14 @@ async def pt():
                     member = guild.get_member(int(user[0]))
                     e = Embed(
                         title="Inactivity Alert", 
-                        description='''
+                        description=''
                         **%s did not meet quota.**
                         Their weekly quota was: **%s** points, but they only had **%s** points.\n
                         Their roles are: %s \n 
                         If they shouldn't have a quota copy the following command \n
                         `.noquota %s` \n
                         When you are done with this card react with ❌
-                        ''' % (member.display_name,
+                        ' % (member.display_name,
                         40,
                         user[1], 
                         ", ".join([(role.name) for role in member.roles]),
@@ -161,7 +161,7 @@ async def pt():
             value = "You have canceled rollover this week, dm @Arceye if this was a mistake",
             inline=False)
             await msg.edit(embed=embed)
-
+'''
         
         
 
@@ -173,7 +173,7 @@ async def on_ready():
     # Loads config for guilds the bot is currently a member of.
     await log("Loading config for connected guilds.")
     st.start()
-    pt.start()
+    # pt.start()
     for guild in client.guilds:
         cfg = await server_config.get_config(guild)
         if cfg is not None:

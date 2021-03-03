@@ -247,6 +247,28 @@ class ModerationCommands(commands.Cog):
         embed.add_field(name = "========================", value=feildtext, inline=False)
         await ctx.send(embed=embed)
     
+    @commands.command()
+    async def aq(self, ctx: Context):
+        tomake = [
+        {
+            "role": "Moderation Branch Hierarchy",
+            "color": 0x000000,
+            "desc": "**<@&761313993159475280> < <@&780306791212122153> < <@&522816654091223051>**"
+        },
+        {
+            "role": "Raid Leader Branch",
+            "color": 0x000000,
+            "desc": "**<@&790331735631593472> = <@&522817272616583181> < <@&790743719112343553> = <@&780543201333215295> < <@&779512163923525672> = <@&780515270446940161> < <@&765649870979596299> < <@&761211992438472744> < <@&522816654091223051>**"
+        }
+        ]
+
+        for role in tomake:
+            embed=Embed(
+                title="%s" % (role["role"]), 
+                description="%s"% (role["desc"]),
+                color=role["color"])
+            embed.set_footer(text="Space Travel Dungeons", icon_url="https://cdn.discordapp.com/attachments/751589431441490082/764948382912479252/SPACE.gif")
+            await ctx.send(embed=embed)
 async def on_reaction_add(reaction: Reaction, user: User):
     pass
 
