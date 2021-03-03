@@ -1,5 +1,5 @@
 from discord.ext import commands, tasks
-from discord import Intents, User, Reaction, Message, TextChannel
+from discord import Intents, User, Reaction, Message, TextChannel, NotFound
 from discord.ext.commands import CommandNotFound, Context, CommandInvokeError
 from emojis import decode
 from discord import Embed
@@ -66,8 +66,11 @@ async def st():
                     dellist.append(uid)
                 else:
                     data[uid]['dur'] = data[uid]['dur'] - 2
-            except Exception:
+            except NotFound:
+                dellist.append(uid)
+            except Exception as e:
                 await log("An unexpected Error has occured during unsuspend tread.")
+                await log(e)
         for uid in dellist:
             data.pop(uid, None)
         sl.seek(0)
