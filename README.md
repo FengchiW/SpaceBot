@@ -11,6 +11,7 @@ Python Realm of the Mad God (Game) Discord Bot
 - Realmeye data scraper
 - Discord.py
 - Mysql Connector
+- Mongodb
 - Asyncio
 
 # Credits

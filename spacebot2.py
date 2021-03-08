@@ -18,12 +18,12 @@ load_dotenv()
 import os
 from datetime import datetime, timedelta
 
-LIVETOKEN = os.getenv("LIVETOKEN")
+WATCHTOWER = os.getenv("WATCHTOWER")
 DEVTOKEN = os.getenv("DEVTOKEN")
 
 # dev token, please start using environment variables...
 #Different token
-DISCORD_TOKEN = LIVETOKEN
+DISCORD_TOKEN = WATCHTOWER
 
 
 TOKEN = DISCORD_TOKEN
