@@ -356,7 +356,8 @@ async def fetch_staff(uid):
             'potratio': data[9],
             'failed': data[10],
             'leave': data[11],
-            'warn': data[12]
+            'warn': data[12],
+            'monthly': data[13]
         }
         
         return out

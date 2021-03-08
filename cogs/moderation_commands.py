@@ -179,6 +179,7 @@ class ModerationCommands(commands.Cog):
         embed.add_field(name="Pot Ratio: ",        value="%s"   % (user['potratio']),         inline=True)
         embed.add_field(name="Failed Runs: ",      value="%s"   % (user['failed']),           inline=True)
         embed.add_field(name="On Leave: ",         value="%s"   % (user['leave']),            inline=True)
+        embed.add_field(name="Monthly Points: ",   value="%s"   % (user['monthly']),          inline=True)
         embed.add_field(name="Warnings: ",         value="%s"   % (user['warn']),             inline=True)
         await ctx.send(embed=embed)
     
